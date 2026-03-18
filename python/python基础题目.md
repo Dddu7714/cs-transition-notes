@@ -40,6 +40,10 @@
   - [可变值和不可变值](#可变值和不可变值)
   - [列表](#列表)
   - [切片](#切片)
+- [摆平积木](#摆平积木)
+  - [题目](#题目-6)
+  - [算术运算符](#算术运算符-1)
+  - [复合赋值运算符](#复合赋值运算符-1)
 
 # A+B问题1
 ## 题目
@@ -419,48 +423,47 @@ for number in numbers:
     10
     15
     ```
-- 答案：
 
-*自己尝试*
-```python
-while True:
-    try:
-        data =list(map(int, input().split()))
-        N = data[0]
-        if N==0:
+- 自己尝试  
+    ```python
+    while True:
+        try:
+            data =list(map(int, input().split()))
+            N = data[0]
+            if N==0:
+                break
+            res = 0
+            for i in range(N):
+                res = res + data[i+1]
+            print(res)
+        except:
             break
-        res = 0
-        for i in range(N):
-            res = res + data[i+1]
-        print(res)
-    except:
-        break
-```
-*答案 1*
-```python
-while True:
-    input_line = input().split()
-    n = int(input_line[0])
-    if n == 0:
-        break
-    else:
-        res = 0
-        for i in range(n):
-            res = res + int(input_line[i+1])
-        print(res)
-```
-*答案 2* 使用map, sum, 切片
-```python
-while True:
-    input_line = input().split()
-    n = int(input_line[0])
-    if n == 0:
-        break
-    else:
-        numbers = list(map(int, input_line[1:]))
-        res = sum(numbers)
-        print(res)
-```
+    ```
+- 答案1
+    ```python
+    while True:
+        input_line = input().split()
+        n = int(input_line[0])
+        if n == 0:
+            break
+        else:
+            res = 0
+            for i in range(n):
+                res = res + int(input_line[i+1])
+            print(res)
+    ```
+- 答案2 使用map, sum, 切片
+    ```python
+    while True:
+        input_line = input().split()
+        n = int(input_line[0])
+        if n == 0:
+            break
+        else:
+            numbers = list(map(int, input_line[1:]))
+            res = sum(numbers)
+            print(res)
+    ```
 
 ## 算术运算符
 加法+  
@@ -741,3 +744,39 @@ print(my_list)             # [3, 4, 2] (原列表不变)
 且在索引元素前的空隔，包含start不含end，step默认为1挨着取
 ![alt text](https://img2024.cnblogs.com/blog/3696856/202509/3696856-20250909092713848-346441485.png)
 
+# 摆平积木
+## 题目
+- 题目描述：  
+  计算若干整数的和。
+- 输入描述：  
+  每行的第一个数N，表示本行后面有N个数。
+  如果N=0时，表示输入结束，且这一行不要计算。  
+- 输出描述：  
+  对于每一行数据需要在相应的行输出和。
+- 输入示例： 
+    ```text
+    4 1 2 3 4
+    5 1 2 3 4 5
+    0
+    ```
+- 输出示例： 
+    ```text
+    10
+    15
+    ```
+
+- 自己尝试  
+    ```python
+
+    ```
+- 答案1
+    ```python
+
+    ```
+
+
+## 算术运算符
+
+
+## 复合赋值运算符
+`sum = sum + i`
