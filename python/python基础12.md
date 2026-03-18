@@ -1,4 +1,4 @@
-- [Python基础A+B问题1](#python基础ab问题1)
+- [A+B问题1](#ab问题1)
   - [题目](#题目)
   - [输入](#输入)
   - [数据类型](#数据类型)
@@ -7,7 +7,7 @@
   - [计算A+B](#计算ab)
   - [循环输入输出](#循环输入输出)
   - [模块](#模块)
-- [python基础2](#python基础2)
+- [A+B问题2](#ab问题2)
   - [题目](#题目-1)
   - [\_占位符](#_占位符)
   - [列表List](#列表list)
@@ -16,7 +16,7 @@
   - [while循环](#while循环)
   - [数据类型转换](#数据类型转换)
   - [sys模块](#sys模块)
-- [python基础 A+B问题3](#python基础-ab问题3)
+- [A+B问题3](#ab问题3)
   - [题目](#题目-2)
   - [if语句](#if语句)
   - [关系运算符](#关系运算符)
@@ -24,16 +24,16 @@
   - [break循环](#break循环)
   - [continue](#continue)
   - [条件运算符/三元](#条件运算符三元)
-- [python基础 A+B问题4](#python基础-ab问题4)
+- [A+B问题4](#ab问题4)
   - [题目](#题目-3)
   - [算术运算符](#算术运算符)
   - [复合赋值运算符](#复合赋值运算符)
   - [内置数学函数](#内置数学函数)
   - [内置sum(列表, 初始值)函数](#内置sum列表-初始值函数)
   - [map(function, list)函数](#mapfunction-list函数)
-- [python基础 A+B问题3](#python基础-ab问题3-1)
+- [A+B问题5](#ab问题5)
   - [题目](#题目-4)
-- [python基础6 数组的倒序与隔位输出](#python基础6-数组的倒序与隔位输出)
+- [数组的倒序与隔位输出6](#数组的倒序与隔位输出6)
   - [题目](#题目-5)
   - [数组](#数组)
   - [序列](#序列)
@@ -41,7 +41,7 @@
   - [列表](#列表)
   - [切片](#切片)
 
-# Python基础A+B问题1
+# A+B问题1
 ## 题目
 - 题目描述：  
 你的任务是计算 a+b。
@@ -137,7 +137,7 @@ print(sqrt(25))
 
 
 
-# python基础2
+# A+B问题2
 ## 题目
 - 题目描述：  
   计算a+b，但输入方式有所改变。
@@ -287,34 +287,52 @@ for line in sys.stdin:
 
 
 
-# python基础 A+B问题3
+# A+B问题3
 ## 题目
-![alt text](https://img2024.cnblogs.com/blog/3696856/202509/3696856-20250902113931241-1402444203.png)
+- 题目描述：  
+  计算a+b。
+- 输入描述：  
+  输入中每行是一对a和b。其中会有一对是0和0标志着输入结束，且这一对不要计算。  
+- 输出描述：  
+对于输入的每对a和b，你需要在相应的行输出a、b的和。
+如第二对a和b，对应的和也输出在第二行。
+- 输入示例： 
+    ```text
+    2 4
+    11 19
+    0 0
+    ```
+- 输出示例： 
+    ```text
+    6
+    30
+    ```
+- 答案：
+    ```python
+    while True: 
+        try:
+            s = input().split()
+            a, b = int(s[0]), int(s[1])
+            # 如果输入的a和b同时为0， 则终止循环，如果不是同时为0，则跳过该代码块，不执行
+            if a == 0 and b == 0:
+                # 遇到特定输入时退出循环
+                break
+            print(a + b)
+        except:
+            break
+    ```
+
 *自己尝试出的*
 ```python
 while True:
     try:
         a,b=map(int,input().split())
-        if (a!=0)or(b!=0):
+        if (a!=0) or (b!=0):
         #if not a and not b:等价于if a==0 and b==0:
-        #if (a!=0) or (b!=0): # if (a!=0) or (b!=0) 这里比较的是字符串 "0" 和整数 0，它们不相等
-            print(int(a)+int(b))
+        ## 如果不加int操作，比较的是字符串 "0" 和整数 0，它们永远不相等
+            print(a+b)
         else:
             print("\n")
-    except:
-        break
-```
-*答案*
-```python
-while True: 
-    try:
-        s = input().split()
-        a, b = int(s[0]), int(s[1])
-        # 如果输入的a和b同时为0， 则终止循环，如果不是同时为0，则跳过该代码块，不执行
-        if a == 0 and b == 0:
-              # 遇到特定输入时退出循环
-            break
-        print(a + b)
     except:
         break
 ```
@@ -323,6 +341,7 @@ while True:
 
 ## if语句
 条件语句，表示假设在某种条件下，代码才可以执行。  
+<font color=red>注意</font>：尽量不适用else，否则时间花费会更多。  
 **condition**是条件判断，返回布尔值（真和假），真-执行缩进里的代码；假-跳过这一段。
 ```  python
 if condition:
@@ -380,25 +399,42 @@ for number in numbers:
 ```
 
 
-# python基础 A+B问题4
+# A+B问题4
 ## 题目
-![alt text](https://img2024.cnblogs.com/blog/3696856/202509/3696856-20250902113931943-47115249.png)
+- 题目描述：  
+  计算若干整数的和。
+- 输入描述：  
+  每行的第一个数N，表示本行后面有N个数。
+  如果N=0时，表示输入结束，且这一行不要计算。  
+- 输出描述：  
+  对于每一行数据需要在相应的行输出和。
+- 输入示例： 
+    ```text
+    4 1 2 3 4
+    5 1 2 3 4 5
+    0
+    ```
+- 输出示例： 
+    ```text
+    10
+    15
+    ```
+- 答案：
+
 *自己尝试*
 ```python
 while True:
     try:
-        res = 0
-        data = list(map(int, input().split()))
+        data =list(map(int, input().split()))
         N = data[0]
-        if N!=0:
-            for n in range(1,N+1):
-                res = res + data[n]
-            print(res)
-        else:
+        if N==0:
             break
+        res = 0
+        for i in range(N):
+            res = res + data[i+1]
+        print(res)
     except:
         break
-# 出错在循环的次数上range
 ```
 *答案 1*
 ```python
@@ -494,24 +530,31 @@ print(int_numbers)
 ```
 
 
-# python基础 A+B问题3
+# A+B问题5
 ## 题目
-题目描述: 你的任务是计算若干整数的和。   
-输入描述: 输入的第一行为一个整数N，接下来N行每行先输入一个整数M，然后在同一行内输入M个整数。   
-输出描述: 对于每组输入，输出M个数的和，每组输出之间输出一个空行。   
-输入示例:    
-3   
-4 1 2 3 4    
-5 1 2 3 4 5    
-3 1 2 3    
-输出示例:    
-10    
+- 题目描述:   
+  你的任务是计算若干整数的和。   
+- 输入描述:    
+  输入的第一行为一个整数N，接下来N行每行先输入一个整数M，然后在同一行内输入M个整数。   
+- 输出描述:    
+  对于每组输入，输出M个数的和，每组输出之间输出一个空行。   
+- 输入示例:
+  ```text    
+    3   
+    4 1 2 3 4    
+    5 1 2 3 4 5    
+    3 1 2 3    
+    ```
+- 输出示例:   
+  ```text   
+    10    
 
-15   
+    15   
 
-6   
+    6  
+    ``` 
 
-提示：注意以上样例为一组测试数据，后端判题会有很多组测试数据，也就是会有多个N的输入，只保证每组数据内部之间有空白行，两组数据之间没有空行  
+提示：注意以上样例为一组测试数据，后端判题会有很多组测试数据，也就是会有多个N的输入，只保证每组数据内部之间有空白行，两组数据之间没有空行！  
 
  <font color=red>vscode输入时，按shift+enter为换行，但是上一行不显示只显示当前行，边输入边运行，eg:输入3没反应，再输4 1 2 3 4 计算出结果输出</font>
 
@@ -519,44 +562,43 @@ print(int_numbers)
 ```python
 while True:
     try:
-        n = int(input())
-        for i in range(n):
+        N = int(input())
+        for i in range(N):
             data = list(map(int, input().split()))
-            m = data[0]
+            M = data[0]
             res = 0
-            for j in range(1,m+1):
-                res += data[j]
+            for j in range(M):
+                res += data[j+1]
             print(res)
-            if i < (n-1):
+            if i < (N-1):
                 print()
             else:
                 break
-            # i += 1 while循环才需要加这个
     except:
         break
 ```
-*答案*
-```python
-while True:
-    try:
-        N = int(input())
-        for i in range(N):
-            input_line = input().split()
-            m = int(input_line[0])
-            total = 0
-            # 累加 m 个数值
-            for j in range(m):
-                total += int(input_line[j + 1])
-            print(total)
-            # 控制输出一个空行，每组数据的最后一行不输出
-            if i < N-1:
-                print()
-    except:
-        break
-```
+- 答案：  
+    ```python
+    while True:
+        try:
+            N = int(input())
+            for i in range(N):
+                input_line = input().split()
+                m = int(input_line[0])
+                total = 0
+                # 累加 m 个数值
+                for j in range(m):
+                    total += int(input_line[j + 1])
+                print(total)
+                # 控制输出一个空行，每组数据的最后一行不输出
+                if i < N-1:
+                    print()
+        except:
+            break
+    ```
 
 
-# python基础6 数组的倒序与隔位输出
+# 数组的倒序与隔位输出6
 ## 题目
 - 题目描述:    
 给定一个整数数组，编写一个程序实现以下功能：  
@@ -565,70 +607,73 @@ while True:
 - 输入描述:    
 第一行包含一个整数 n，表示数组的长度。  
 接下来一行包含 n 个整数，表示数组的元素。    
-输出描述: 首先输出倒序排列的数组元素，然后输出正序数组中每隔一个单位的元素。    
+- 输出描述:  
+  首先输出倒序排列的数组元素，然后输出正序数组中每隔一个单位的元素。    
 
-- 输入示例:    
-5   
-2 3 4 5 6   
+- 输入示例:
+  ```text    
+    5   
+    2 3 4 5 6   
+  ```
     
-- 输出示例:    
-6 5 4 3 2    
-2 4 6   
+- 输出示例:      
+  ```text
+    6 5 4 3 2    
+    2 4 6   
+  ```
+- 提示：   
+  数据范围1 <= n <= 1000.   
 
-- 提示：数据范围1 <= n <= 1000.
-
-*自己尝试*
-```python
-n = int(input())
-        my_list = list(map(int,input().split()))
-        if 1<= n <=1000:
-            # my0_list = my_list # 0是正序，错！这不是创建副本，而是引用
-            my0_list = my_list.copy()
-            my0_list.reverse()
-            my1_list = my0_list.copy() # 1是逆序
-            my2_list = my_list[::2]
-            print(*my1_list, sep=" ")
-            print(*my2_list, sep=" ")
-        else:
-            break
-```
-*答案*
-```python
-n = int(input())
-nums = list(map(int, input().split()))
-for i in range(-1, -n-1, -1):
-    print(nums[i], end=" ")
-print()
-for j in range(0, n, 2):
-    print(nums[j], end=" ")
-```
+- 自己尝试:    
+    ```python
+    n = int(input())
+    if (n>=1) and (n<=1000):
+        nums = list(map(int, input().split()))
+        for i in range(n):
+            print(nums[-i-1], end=" ")
+        print()
+        for j in range(0, n, 2):
+            print(nums[j], end=" ")
+    else:
+        print('输入错误')
+    ```
+- 答案：  
+    ```python
+    n = int(input())
+    nums = list(map(int, input().split()))
+    for i in range(-1, -n-1, -1):
+        print(nums[i], end=" ")
+    print()
+    for j in range(0, n, 2):
+        print(nums[j], end=" ")
+    ```
 __倒序输出__：使用`for循环`和`range函数`倒序遍历  
 __隔位输出__：`print(object, end=" ")`
 
 
 ## 数组
-一种用于存储相同数据类型的元素的数据结构
-- 大小固定：一旦声明，不能在运行时动态更改
+一种用于存储相同数据类型的元素的**数据结构**
+- 大小固定：元素个数一旦声明，不能在运行时动态更改
 -  相同数据类型：所有元素类型相同
 -  连续存储：在内存中连续存储
 -  下标访问：通过索引进行访问，从0开始
 
 ## 序列
-保存一组有序的数据，所有数据都有唯一的位置（索引），主要序列类型如下：   
+python中保存一组有序数据的数据类型，所有数据都有唯一的位置（索引），主要序列类型如下：   
 - 列表：[]，元素之间逗号,分隔。可变，可增删改
 - 元组：()，元素之间逗号,分隔。不可变，创建后元素不可改
-- 字符串："  "或' '包裹起来的字符集合，元素是字符。不可变
-序列有一些共同特性，比如通过索引访问、切片、长度计算、迭代等，即切片和for循环操作在元组和字符串中也可以进行
+- 字符串："  "或' '包裹起来的字符集合，元素是字符，不可变    
+序列有一些共同特性，比如通过索引访问、切片、长度计算、迭代等，即切片和for循环操作在元组和字符串中也可以进行。
 
 ## 可变值和不可变值
-数据在创建后是否可以被改变，不可变指当改变值的时候，会创建一个新的对象
-- 可变：创建后可以原地进行修改，包括列表、字典、集合等
-- 不可变：创建后不能被修改，包括整数、浮点数、字符串、元组等
+python中数据类型按照创建后是否可以被改变分为2类。   
+- 可变：创建后可以**原地**进行修改，包括列表、字典、集合等
+- 不可变：创建后不能被修改，包括整数、浮点数、字符串、元组等，当改变值的时候，会创建一个**新的对象**  
 ![alt text](https://img2024.cnblogs.com/blog/3696856/202509/3696856-20250909092712810-650876974.png)
 
 ## 列表
-与数组相比更灵活，存储一组有序的元素，但可以包含各种不同类型的元素甚至是其他列表，而且列表长度可变
-1. 创建列表：方括号[]或list()，`list函数`可将其他可迭代对象转换成列表
+python中用列表替换了数组，与数组相比更灵活，存储一组有序的元素，但可以包含各种*8不同类型**的元素甚至是其他列表，而且列表长度可变。  
+1. 创建列表：方括号[]或list(可迭代对象)，`list函数`可将其他可迭代对象转换成列表
    ```python
    a = [1, 2, 3, 4]
    # 错 a = list(1, 2, 3)
