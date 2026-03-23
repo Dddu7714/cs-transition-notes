@@ -1,8 +1,9 @@
 - [模版](#模版)
   - [题目](#题目)
+  - [答案](#答案)
 - [1 A+B问题](#1-ab问题)
   - [题目](#题目-1)
-  - [答案](#答案)
+  - [答案](#答案-1)
   - [输入](#输入)
   - [数据类型](#数据类型)
   - [变量赋值](#变量赋值)
@@ -12,7 +13,7 @@
   - [模块](#模块)
 - [2 A+B问题](#2-ab问题)
   - [题目](#题目-2)
-  - [答案：](#答案-1)
+  - [答案：](#答案-2)
   - [\_占位符](#_占位符)
   - [列表List](#列表list)
   - [range()函数](#range函数)
@@ -22,7 +23,7 @@
   - [sys模块](#sys模块)
 - [3 A+B问题](#3-ab问题)
   - [题目](#题目-3)
-  - [答案：](#答案-2)
+  - [答案：](#答案-3)
   - [if语句](#if语句)
   - [关系运算符](#关系运算符)
   - [逻辑运算符](#逻辑运算符)
@@ -31,7 +32,7 @@
   - [条件运算符/三元](#条件运算符三元)
 - [4 A+B问题](#4-ab问题)
   - [题目](#题目-4)
-  - [答案](#答案-3)
+  - [答案](#答案-4)
   - [算术运算符](#算术运算符)
   - [复合赋值运算符](#复合赋值运算符)
   - [内置数学函数](#内置数学函数)
@@ -41,7 +42,7 @@
   - [题目](#题目-5)
 - [6 数组的倒序与隔位输出](#6-数组的倒序与隔位输出)
   - [题目](#题目-6)
-  - [答案](#答案-4)
+  - [答案](#答案-5)
   - [数组](#数组)
   - [序列](#序列)
   - [可变值和不可变值](#可变值和不可变值)
@@ -49,11 +50,47 @@
   - [切片](#切片)
 - [7 摆平积木](#7-摆平积木)
   - [题目](#题目-7)
-  - [答案](#答案-5)
+  - [答案](#答案-6)
 - [8 数字中偶数的和](#8-数字中偶数的和)
   - [题目](#题目-8)
-  - [答案：](#答案-6)
+  - [答案：](#答案-7)
   - [使用取模运算和整数除法来获取每一位，直到 n 变为0](#使用取模运算和整数除法来获取每一位直到-n-变为0)
+- [9 打印正方形](#9-打印正方形)
+  - [题目](#题目-9)
+  - [答案](#答案-8)
+  - [循环嵌套](#循环嵌套)
+- [10 平均绩点](#10-平均绩点)
+  - [题目](#题目-10)
+  - [答案](#答案-9)
+  - [字符串string的使用](#字符串string的使用)
+  - [``format``方法](#format方法)
+- [11 句子缩写](#11-句子缩写)
+  - [题目](#题目-11)
+  - [答案：](#答案-10)
+  - [字符串大小的比较](#字符串大小的比较)
+  - [函数](#函数)
+  - [实参和形参](#实参和形参)
+- [12 位置互换](#12-位置互换)
+  - [题目](#题目-12)
+  - [答案](#答案-11)
+  - [元组](#元组)
+- [13 链表的基础操作1](#13-链表的基础操作1)
+  - [题目](#题目-13)
+  - [答案](#答案-12)
+  - [链表](#链表)
+  - [class类](#class类)
+  - [定义链表节点](#定义链表节点)
+  - [链表的插入](#链表的插入)
+  - [打印链表的节点](#打印链表的节点)
+- [14 链表的基础操作2](#14-链表的基础操作2)
+  - [题目](#题目-14)
+  - [答案](#答案-13)
+  - [寻找第n个节点get方法](#寻找第n个节点get方法)
+- [15 链表的基础操作3](#15-链表的基础操作3)
+  - [题目](#题目-15)
+  - [答案](#答案-14)
+  - [插入链表的过程](#插入链表的过程)
+  - [删除链表的过程](#删除链表的过程)
 
 
 
@@ -74,12 +111,12 @@
     ```text
     7
     ```
-- 答案：
+## 答案  
     ```python
    
     ```
 
-**粗体**``灰底`` 
+**粗体**``灰底`` *斜体*
 
 
 # 1 A+B问题
@@ -112,7 +149,7 @@
             break    
     ```
 ## 输入
-**input()**：接收的总是一个字符串，``int(input())``例如输入整数3, input()接收的内容是 "3", int("3")转为整数3  
+**input()**：<font color=red>接收的总是一个字符串</font>，``int(input())``例如输入整数3, input()接收的内容是 "3", int("3")转为整数3  
 ``input("请输入一些文本: ")``  
 print()函数和input()函数结合起来，实现与用户的交互 
   
@@ -600,7 +637,7 @@ print(int_numbers)
 
  <font color=red>vscode输入时，按shift+enter为换行，但是上一行不显示只显示当前行，边输入边运行，eg:输入3没反应，再输4 1 2 3 4 计算出结果输出</font>   
 
-## 答案
+## 答案   
 - 自己尝试：
 ```python
 while True:
@@ -897,25 +934,981 @@ print(my_list)             # [3, 4, 2] (原列表不变)
             break   
     ```
 
+# 9 打印正方形
+## 题目
+- 题目描述：  
+  编写一个程序，模拟打印一个正方形的框。程序应该接受用户输入的正整数作为正方形的边长，并打印相应大小的正方形框。   
+  请注意，内部为空白，外部是由 "*" 字符组成的框。
+- 输入描述：  
+  输入只有一行，为正方形的边长 n。
+- 输出描述：  
+  输出正方形组成的框。
+- 输入示例： 
+    ```text
+    5
+    ```
+- 输出示例： 
+    ```text
+    *****
+    *   *
+    *   *
+    *   *
+    *****
+    ```
+## 答案
+- 答案1：
+    ```python
+    n = int(input())
+    for i in range(n):
+        for j in range(n):
+            if (i == 0) or (j == 0) or (i == n-1) or (j == n-1):
+                print("*", end = " ")
+            else:
+                print(" ", end = " ")
+        i += 1
+        print()
+    ```
+- 答案2：
+  ```python
+    n = int(input())
+    print("* " * n)
+    if n>1:
+        for i in range(n-2):
+            print("* " + "  " * (n-2) + "*")
+        print("* " * n)
+  ```
+
+<font color=red>``print()``每调用一次会自动换行输出，参数``end=""`` 不换行</font>
+## 循环嵌套
+之前的学习中，已经知道了如何用for循环遍历列表结构，但数据的组织形式除了是一维的，还可能是多维的，比如数学中的矩阵、表格、游戏棋盘。
+对于二维的数据，需要循环嵌套。
+```python
+# 创建一个包含二维数据的二维列表，即列表的每一个元素都是一个列表
+matrix = [
+    [1, 2, 3, 4, 5],
+    [6, 7, 8, 9, 10],
+    [11,12,13,14,15],
+      [16,17,18,19,20],
+      [21,22,23,24,25]
+]
+
+# 遍历二维列表
+for row in matrix: # 外部循环迭代行，也就是第一行，第二行... 第n行
+    for item in row: #  内部循环迭代列，也就是第一列，第二列...第n列
+        print(item, end=" ") # 输出元素值
+    # 在每行结束后换行
+    print()
+```
+
+# 10 平均绩点  
+## 题目  
+- 题目描述：  
+  每门课的成绩分为A、B、C、D、F五个等级，为了计算平均绩点，规定A、B、C、D、F分别代表4分、3分、2分、1分、0分。
+- 输入描述：  
+  有多组测试样例。每组输入数据占一行，由一个或多个大写字母组成，字母之间由空格分隔。
+- 输出描述：  
+  每组输出结果占一行。如果输入的大写字母都在集合｛A,B,C,D,F｝中，则输出对应的平均绩点，结果保留两位小数。否则，输出“Unknown”。
+- 输入示例： 
+    ```text
+    A B C D F
+    B F F C C A
+    D C E F
+    ```
+- 输出示例： 
+    ```text
+    2.00
+    1.83
+    Unknown
+    ```   
+## 答案
+- 注意：当循环遇到{A, B, C, D, F}以及空格之外的字符时，会输出"Unknown", 然后退出for循环的执行，但是仍然会执行循环之后的语句，即print平均成绩语句，实际上，这行代码不应该被执行，应该怎样做才能避免这行代码的执行呢？
+    ```python
+    # 初始化一个 "真令牌"
+    flag = True
+    # 在某种情况下真令牌被替换成假令牌
+    flag = False
+    # 无法执行下面的逻辑
+    if flag:
+        # 在flag为True时执行的代码
+    ```
+- 答案：
+    ```python
+    while True:
+        try:
+            s = input()
+            sum_grade = 0
+            count = 0
+            flag = 1
+            # 遍历字符串
+            for char in s:
+                if char == 'A':
+                    sum_grade += 4
+                    count += 1
+                elif char == 'B':
+                    sum_grade += 3
+                    count += 1
+                elif char == 'C':
+                    sum_grade += 2
+                    count += 1
+                elif char == 'D':
+                    sum_grade += 1
+                    count += 1
+                elif char == 'F':
+                    count +=1
+                elif char == ' ':
+                    continue
+                else:
+                    flag = 0
+                    print("Unknown")
+                    break
+            if flag:  # 非0值为真
+                print("{:.2f}".format(sum_grade / count))
+        except:
+            break
+    ```
+
+## 字符串string的使用   
+可以变长的字符序列，用来存储文本信息和操作文本数据。   
+- 创建     
+  使用单引号``''``或双引号``""``来创建，python中没有字符类型，一个字符也是字符串。  
+    ```python
+    str1 = "hello,world"
+    str2 = 'a'
+    ```
+- 拼接  
+  使用``+``运算符拼接字符串
+  ```python
+  first_name = "Tom"
+  last_name = "Jerry"
+  full_name = first_name + " " + "and" + " " + last_name
+  # full_name 现在是 Tom and Jerry
+  ```
+
+- 索引访问   
+  索引从0开始，能进行遍历和切片操作。  
+  ```python
+    str1 = "Hello"
+    # 使用正数索引访问字符串中的字符
+    first_char = str1[0]  # 获取第一个字符 H
+    last_char = str1[-1] 	# 获取最后一个字符 o
+
+    str1 = "Hello"
+    # 使用 for 循环遍历字符串中的字符
+    for char in str1:
+        print(char, end = " ")
+    # 输出结果：H e l l o
+
+    str1 = "Hello,World!"
+
+    # 使用切片操作获取子字符串
+    sub_string = str1[0:5]  # 获取从索引0到索引4的子字符串，不包括索引5的字符
+    print(sub_string)  # 输出结果：Hello
+
+    # 省略起始和结束索引来获取整个字符串
+    full_string = str1[:]
+    print(full_string)  # 输出结果：Hello,World!
+
+    # 使用步长来获取间隔字符
+    step_string = str1[0::2]  # 从索引0开始，每隔2个字符获取一个字符
+    print(step_string)  # 输出结果：HloWrd
+  ```
+- 字符串操作方法   
+  ``len(str)``获取字符串长度    
+  ``str.split()`` 将字符串分割成子字符串并返回一个列表，默认情况下，使用空格作为分隔符   
+  ``" ".join(str的列表)`` 将列表中的字符串连接成一个新的字符串，你可以指定连接符号，比如下面的示例  
+  ```python
+    data = ['mike', 'john', 'jerry']
+    "*".join(data) # 结果为'mike*john*jerry'
+  ```  
+  ``str.replace("A", "B")``用B替换字符串中的指定子字符串A   
+
+## ``format``方法  
+{0}是``str.format()``方法使用的索引占位符之一。    
+这种格式化方式允许通过位置参数或关键字参数来插入和格式化<font color=red>字符串内容</font>。   
+当使用数字作为占位符时，这些数字代表传递给``.format()``函数的相应参数的位置。     
+```python
+person_info = "姓名:{0}, 年龄:{1}"
+result = person_info.format('张三', 28)
+print(result)    # 输出：姓名:张三, 年龄:28
+
+formatted_number = "{:.2f}".format(3.1415926)
+print(formatted_number) 
+``` 
+
+# 11 句子缩写
+## 题目
+- 题目描述：  
+  输出一个词组中每个单词的首字母的大写组合。
+- 输入描述：  
+  输入的第一行是一个整数n，表示一共有n组测试数据。（输入只有一个n，没有多组n的输入）   
+  接下来有n行，每组测试数据占一行，每行有一个词组，每个词组由一个或多个单词组成；每组的单词个数不超过10个，每个单词有一个或多个大写或小写字母组成；    
+  单词长度不超过10，由一个或多个空格分隔这些单词。  
+- 输出描述：  
+  请为每组测试数据输出规定的缩写，每组输出占一行。   
+- 输入示例： 
+    ```text
+    1
+    ad dfa     fgs
+    ```
+- 输出示例： 
+    ```text
+    ADF
+    ```
+- 提示信息：
+  单词之间可能有多个空格
+## 答案：
+- 无函数版
+   ```python
+    n = int(input())
+    for _ in range(n):
+        s = input()
+        result = ''
+        if s[0].islower():
+            result += s[0].upper()
+        else:
+            result += s[0]
+        #这里答案给的是len(s)-1，如果确认最后一个字符不是空格则s[len(s)-1]不可能为空格，可以不减一，若不确定是否空格必须减一，否则会索引越界
+        for i in range(0, len(s)):
+            # # 如果当前字符是空格，下一个字符不是空格，说明下一个字符是新单词的首字母
+            if s[i] == ' ' and s[i+1] != ' ':
+                if s[i+1].islower():
+                    result += s[i + 1].upper()
+                else:
+                    result += s[i+1]
+        print(result)
+   ```
+- 函数版
+  ```python
+    # 将小写字母转换成大写字母的函数
+    def change_char(a):
+        if 'a' <= a <= 'z':
+            a = chr(ord(a) - 32)
+        return a
+
+    n = int(input())
+    for _ in range(n):
+        result = ""
+        s = input()
+        result += change_char(s[0])  # 将s[0]传递到参数进行处理，转换成大写字母
+        for i in range(1, len(s) - 1):
+            if s[i] == ' ' and s[i + 1] != ' ':
+                result += change_char(s[i + 1])  # 将s[i+1]传递到参数进行处理，转换成大写字母
+        print(result)
+  ```
+
+- 字符串方法
+  ```python
+    n = int(input())
+    for _ in range(n):
+        words = input().split()
+        result = ''
+        for word in words:
+            result += word[0].upper()
+        print(result)
+  ```
+## 字符串大小的比较
+字符按照它们的Unicode码点值进行排序。这是一个整数值，用于唯一标识字符，a-z为97-122，A-Z为65-90，大小写字母之间的差值为32，可通过数学运算进行<font color=red>大小写字母的转化</font>。     
+``ord('A')``函数来查找字符的Unicode码点值     
+``islower()isupper()``用于检查字符串中的字符是否都是小写/大写字母    
+``lower()upper()``方法将字符串中的所有字母转换为小写/大写
+
+## 函数
+```python
+def 函数名(形参列表)：
+    函数体
+```
+- ``def``定义一个函数时，函数名前要放置这样一个关键字，不可更改不能缺少。   
+- 函数名：使用小写字母，并使用下划线``_``分隔单词。   
+- ``()``内填充参数列表，传给函数。   
+- 函数体：编写程序，通常包含一个``return``语句，表示函数的返回结果。     
+
+比如，比大小的函数。   
+```python
+def max(a, b):
+    if (a > b):
+        return a
+    if (b > a):
+        return b
+a = 10
+b = 20
+print(max(a, b))
+```
+比如，小写字符转换为大写字符的函数。   
+```python
+def change_char(a):
+    if 'a' <= a <= 'z':
+        # ord(a)获取unicode码值
+        # chr()函数将unicode码值转为对应的字符
+        a = chr(ord(a)-32)
+    return a
+```
+
+## 实参和形参
+**形参**位于函数的参数列表中，作用是定义函数接受的参数名称，只在函数执行期间有效，在函数执行完毕后会被销毁，它们与函数外部的变量名称可以相同，而不会发生冲突。   
+**实参**是函数调用中传递给函数的具体值或变量，它的值将被传递给函数内部的形参。    
+```python
+def modify_value(x):
+    x = x + 1
+    print(x)
+
+value = 10
+modify_value(value) # 打印11
+print(value) # 仍然是10
+```
+一般情况下，当函数执行时，实参的值会复制一份给形参，因此在函数中的修改只会影响形参的值，不会影响传递的实参。  
+```python
+def modify_list(lst):
+    lst.append(4)
+    print(lst)
+
+my_list = [1, 2, 3]
+modify_list(my_list) # 列表将地址传给函数，函数中对列表进行append()操作，列表的内容改变
+print(my_list) # [1, 2, 3, 4]
+```
+<font color=red>注意：</font>
+如果实参是*可变对象*（例如，列表或字典），函数内的操作可能会影响到实参，这是因为在这种情况下，形参和实参引用的是同一个地址。    
+![alt text](形参实参.png)
+
+
+# 12 位置互换
+## 题目
+- 题目描述：  
+  给定一个长度为偶数位的字符串，请编程实现字符串的奇偶位互换。
+- 输入描述：  
+  输入包含多组测试数据。   
+  输入的第一行是一个整数n，表示有测试数据。（整个输入中，只有一个n）  
+  接下来是n组测试数据，保证串长为偶数位(串长<=50)。   
+- 输出描述：  
+  请为每组测试数据输出奇偶位互换后的结果，每组输出占一行。   
+- 输入示例： 
+    ```text
+    2
+    0aa0
+    bb00
+    ```
+- 输出示例： 
+    ```text
+    a00a
+    bb00
+    ```
+## 答案
+- 自己做的（字符串+拼接）
+   ```python
+    n = int(input())
+    for _ in range(n):
+        s = input()
+        result = ''
+        if (len(s)%2 == 0):
+            for i in range(0, len(s), 2):
+                result += s[i+1]
+                result += s[i]
+            print(result)
+        else:
+            break
+   ```
+- 评论区的（列表）
+  ```python
+    n = int(input())
+    for i in range(n):
+        s = list(input())
+        for j in range(1, len(s)+1):
+            if j% 2== 0:
+                s[j-1], s[j-2] = s[j-2], s[j-1]
+        print(''.join(s), end='\n')
+
+  ```
+- 答案
+  ```python
+    def swap(a, b):
+        return b, a
+    n = int(input())
+    for _ in range(n):
+        chs = list(input())
+        # 遍历列表，注意迭代的步数为2
+        for i in range(0, len(chs)-1, 2):
+            # 交换变量
+            chs[i], chs[i+1] = swap(chs[i], chs[i+1])
+            # 最后将字符列表转换成字符串输出
+        print("".join(chs))
+  ```
+## 元组
+使用``()``来定义，其中的元素用逗号分隔，元组*不可变*。 
+<font color=red>元组中只有一个元素时，需要在元素后面添加逗号，即(1,)</font>    
+- 元组的解构/拆包  
+  将元组中的元素赋值给多个变量，可使用下划线_忽略不需要的值。   
+  ```python
+    ## 赋值
+    a, b, c = (1, 2, 3)
+    _, x, _ = (1, 2, 3)
+    print(x) #输出2
+    # 交换变量的值
+    a = 1
+    b = 2
+    a, b = b, a
+    print(a, b) #输出：2,1
+
+    ## 使用*捕获剩余的元素
+    a, *b, c = (1, 2, 3, 4, 5)
+    print(a, b, c) #输出:1 [2, 3, 4] 5 
+
+    ## 函数调用时传递参数
+    def add(a, b):
+        return a + b
+    # 元组解包传递参数
+    numbers = (1, 2)
+    result = add(*numbers)
+    print(result)  # 输出: 3
+  ```
+- 元组的打包
+  将多个值组合成一个元组。   
+  ```python
+  def get():
+    return 10, 20
+  x, y = get()
+  print(x, y) # 输出10 20
+  ```  
+
+# 13 链表的基础操作1
+## 题目
+- 概述：   
+  **学习到了链表节点的定义方式，以及在尾部插入链表节点以及链表遍历的过程，涉及到的新知识有点多。**
+- 题目描述：  
+  构建一个单向链表，链表中包含一组整数数据。   
+  输出链表中的所有元素。   
+    要求：
+    1. 使用自定义的链表数据结构
+    2. 提供一个 linkedList 类来管理链表，包含构建链表和输出链表元素的方法
+    3. 在 main 函数中，创建一个包含一组整数数据的链表，然后调用链表的输出方法将所有元素打印出来。
+- 输入描述：  
+  包含多组测试数据，输入直到文件尾结束。    
+  每组的第一行包含一个整数 n，表示需要构建的链表的长度。     
+  接下来一行包含 n 个整数，表示链表中的元素。。
+- 输出描述：  
+  每组测试数据输出占一行。  
+  按照顺序打印出链表中的元素，每个元素后面跟一个空格。
+- 输入示例： 
+    ```text
+    5
+    1 2 3 4 5
+    6
+    3 4 5 6 7 8
+    ```
+- 输出示例： 
+    ```text
+    1 2 3 4 5
+    3 4 5 6 7 8
+    ```
+- 注意：数据范围1 <= n <= 1000;
+## 答案  
+```python
+# 链表节点类
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+# 链表类
+class LinkList:
+    def __init__(self):
+        self.head_node = None
+        self.length = 0
+    # 尾部插入链表节点
+    def insert(self, data):
+        self.length += 1
+        new_node = Node(data)
+        if self.head_node is None:
+            self.head_node = new_node
+            return self.head_node
+        current_node = self.head_node
+        while current_node.next is not None:
+            current_node = current_node.next
+        current_node.next = new_node
+        return new_node
+   # 打印链表节点
+    def print_link_list(self):
+        current_node = self.head_node
+        while current_node is not None:
+            # 如果当前节点的下一个节点不是None, 说明没有到最后一个节点，输出空格
+            if current_node.next is not None:
+                print(current_node.data, end=' ')
+            else: # 否则，只输出对应的链表节点值
+                print(current_node.data)
+            current_node = current_node.next
+
+while True:
+    try:
+        n = int(input())  # 接收 n 的输入，表示链表的长度
+        elements = list(map(int, input().split()))  # 接收链表中的元素
+    except:
+        break
+
+    link_list = LinkList()  # 新建链表
+
+    for data in elements:
+        link_list.insert(data)  # 将数据插入到链表节点中
+
+    link_list.print_link_list()  # 打印链表数据
+```
+
+## 链表   
+- 前言： 
+  字符串和数组（列表）这两种结构，元素都可按照一定的顺序排列，都可通过索引访问列表中的元素和字符串中的字符，但是有以下缺点：大小固定、内存连续、元素数据类型固定。
+
+**链表**的元素存储可以是连续的，也可以不理阿旭，每个数据元素除了存储本身的信息(``data数据域``)之外，还存储指示下一个元素的地址的信息(``next指针域``)，元素像是“链”串起来的。   
+![alt text](images/链表.png)   
+第一个节点的存储位置被称为**头节点**，然后通过next指针找到下一个节点，直到找到最后一个节点，最后一个节点的next指针*并不存在*，也就是“空”的，在 Python 中，用None来表示。    
+
+## class类    
+类中的方法每次被调用时，python会自动传递一个参数，表示调用方法的对象本身也就是创建的*实例*，这个参数一般命名为``self``。
+```python
+class Person:
+    # 类中定义一个变量name，会成为所有实例的公共属性
+    name = "Tom"
+    # 定义函数，称之为方法，可通过该类的实例来访问
+    def say_hello(self):
+        print("Hello")
+# 创建Person的实例
+person1 = Person()
+person2 = Person()
+# 实例可以调用属性
+person1.name = "Jerry"
+person2.name = "Mike"
+# 实例可以调用方法
+person1.say_hello()
+person2.say_hello()
+```
+上述操作中，在类中定义了``name``属性，但是会把属性的“值”固定下来，实例``person1、person2``的``name``值都一样，然而应该不同，所以要使用``__init__``方法来初始化属性。   
+```python
+class Person:
+    # 定义__init__方法，name是创造实例时传递的参数
+    def __init__(self, name):
+        # self表示实例本身，即实例.name属性 = 传递的name值
+        self.name = name
+# "Mike"值传递给__init__(self, name）中的name, 进行通过self.name = name给实例添加name属性
+person1 = Person("Mike") 
+```
+``__init__``方法向新创建的对象初始化属性，调用类创建对象时，类后面的所有参数都会一次传递到init中。   
+
+## 定义链表节点  
+一个链表节点包含一个数据元素和一个指向下一个节点的指针，即包括一个**数据字段**和一个**节点字段**。    
+初始化一个新节点，其``next``通常不存在，即一个空值，``None``可以用于初始化或重置对象的属性，以表明属性当前为空或者没有设置。   
+```python
+# 定义链表节点类
+class Node:
+    # init方法，初始化属性
+    def __init__(self, data):
+        self.data = data # 存储节点的数据
+        self.next = None # next指针初始化为None
+```
+上面的代码只是声明了一个链表节点，一个链表是有0到多个链表节点构成的，还需要定义一个**链表类**用于容纳链表节点，一般包括链表**头节点**和链表的**节点长度**这两个属性。   
+```python
+# 定义链表类
+class LinkList:
+    def __init__(self):
+    # 链表头节点，初始化为None
+        self.head_node = None
+        # 链表长度，初始化为0
+        self.length = 0
+```
+
+## 链表的插入
+上述没有提供将节点插入到链表中的操作，那就定义一个方法：接收传入的数据，并构建一个新的节点，插入到链表的尾部，   
+- 新加入一个节点，所以链表长度``length + 1``   
+- 创建一个新的链表节点，初始化它的值为``data``  
+- 如果当前链表还是空链表（头节点为空），则新创建的链表节点为*头节点*   
+- 如果当前链表不为空链表，则当前链表的尾部的``next``指向新节点，新接入的链表节点变为链表的*尾部*     
+```python
+class LinkList:
+    def __init__(self):
+        self.head_node = None
+        self.length = 0
+    # 该方法名称为insert，接收data作为参数
+    def insert(self, data):
+        # 链表长度加1
+        self.length += 1 
+        # 创建一个新的链表节点，初始化值为 data
+        new_node = Node(data) 
+        # 如果当前链表为空链表
+        if self.head_node is None: 
+            #  新创建的链表节点为头节点
+            self.head_node = new_node 
+            return self.head_node
+        # 如果当前链表不是空链表, currentNode 指针初始指向 头节点
+        current_node = self.head_node
+        # 不断移动 currentNode，直到 next 指针为空时停止，说明已经走到最后一个节点
+        while current_node.next is not None:
+            current_node = current_node.next
+        # 将新创建的节点插入到链表的尾部
+        current_node.next = new_node 
+        return new_node # 返回插入的节点
+```
+## 打印链表的节点
+```python
+# 打印链表节点
+def print_link_list(self):
+    current_node = self.head_node
+    while current_node is not None:
+        if current_node.next is not None:
+            print(current_node.data, end=' ')
+        else:
+            print(current_node.data)
+        current_node = current_node.next
+```
+
+
+# 14 链表的基础操作2
+## 题目
+- 概述：  
+  **通过输出链表第 m 个元素练习了链表节点的定义和链表的插入和遍历操作。**
+- 题目描述：  
+  请编写一个程序，实现以下操作：    
+  构建一个单向链表，链表中包含一组整数数据，输出链表中的第 m 个元素（m 从 1 开始计数）。 
+    要求：
+    1. 使用自定义的链表数据结构
+    2. 提供一个 linkedList 类来管理链表，包含构建链表、输出链表元素以及输出第 m 个元素的方法
+    3. 在 main 函数中，创建一个包含一组整数数据的链表，然后输入 m，调用链表的方法输出第 m 个元素
+- 输入描述：  
+  第一行包含两个整数 n 和 k，n 表示需要构建的链表的长度，k 代表输入的 m 的个数。    
+  接下来一行包含 n 个整数，表示链表中的元素。       
+  接下来一行包含 k 个整数，表示输出链表中的第 m 个元素。   
+- 输出描述：  
+  测试数据输出占 k 行。    
+  每行输出链表中的第 m 个元素。如果 m 位置不合法，则输出“Output position out of bounds.”。
+- 输入示例： 
+    ```text
+    5 5
+    1 2 3 4 5
+    4 3 2 9 0
+    ```
+- 输出示例： 
+    ```text
+    4
+    3
+    2
+    Output position out of bounds.
+    Output position out of bounds.
+    ```
+## 答案  
+```python
+    # 链表节点定义
+    class Node:
+        def __init__(self, data):
+            self.data = data
+            self.next = None
+
+    # 链表类定义
+    class LinkList:
+        def __init__(self):
+            self.head_node = None
+            self.length = 0
+        # insert方法
+        def insert(self, data):
+            self.length += 1
+            new_node = Node(data)
+            if self.head_node is None:
+                self.head_node = new_node
+                return self.head_node
+            else:
+                current_node = self.head_node
+                while current_node.next is not None:
+                    current_node = current_node.next
+                current_node.next = new_node
+                return new_node
+
+        ### get节点方法
+        def get(self, n):
+            if n < 1 or n >self.length:
+                return None
+            i = 1
+            # 从头节点开始遍历
+            current_node = self.head_node
+            while current_node is not None:
+                if i == n:
+                    return current_node
+                i += 1
+                current_node = current_node.next    
+            # 没有找到第n个节点的情况下返回None
+            return None
+        ###
+
+    # n表示需要构建的链表的长度，k代表输入的 m 的个数
+    n, k = map(int, input().split())
+
+    # 构建一个新的链表
+    link_list = LinkList()
+    # 根据读入数据写入链表
+    elements = list(map(int, input().split()))
+    for data in elements:
+        link_list.insert(data)
+
+    m_values = list(map(int, input().split()))
+    ### get方法写法
+    for m in m_values:
+        node = link_list.get(m) # 调用 get 方法，获取第 m 个节点
+        if node is not None: # 如果节点 不为 None, 输出对应的 data
+            print(node.data)
+        else: # 否则，则为 m 位置不合法
+            print("Output position out of bounds.")
+    ###
+
+
+    ''' 普通写法
+    for m in m_values:
+        if m < 1 or m > link_list.length:
+            print("Output position out of bounds.")
+        else:
+            current_node = link_list.head_node
+            for _ in range(m - 1):
+                current_node = current_node.next
+            # 输出第m个节点的值
+            print(current_node.data)
+    '''
+```
+## 寻找第n个节点get方法
+将寻找第m个节点定义为链表类的一个方法，方法需要接收一个参数。   
+```python
+def get(self, n):
+    if n < 1 or n >self.length:
+        return None
+### 上面返回None是为了万一后面增加、删除的位置超过了长度
+    i = 1
+    # 从头节点开始遍历
+    current_node = self.head_node
+    while current_node is not None:
+        if i == n:
+            return current_node
+        i += 1
+        current_node = current_node.next    
+    # 没有找到第n个节点的情况下返回None
+    return None
+```
 
 
 
 
+# 15 链表的基础操作3
+## 题目
+- 题目描述：  
+  请编写一个程序，实现以下链表操作：构建一个单向链表，链表中包含一组整数数据。     
+    1. 实现在链表的第 n 个位置插入一个元素，输出整个链表的所有元素。   
+    2. 实现删除链表的第 m 个位置的元素，输出整个链表的所有元素。      
+ 要求：
+        1. 使用自定义的链表数据结构。
+        2. 提供一个 linkedList 类来管理链表，包含构建链表、插入元素、删除元素和输出链表元素的方法。
+        3. 在 main 函数中，创建一个包含一组整数数据的链表，然后根据输入的 n 和 m，调用链表的方法插入和删除元素，并输出整个链表的所有元素。
+- 输入描述：  
+  每次输出只有一组测试数据。    
+  每组的第一行包含一个整数 k，表示需要构建的链表的长度。    
+  第二行包含 k 个整数，表示链表中的元素。   
+  第三行包含一个整数 S，表示后续会有 S 行输入，每行两个整数，第一个整数为 n，第二个整数为 x ，代表在链表的第 n 个位置插入 x。     
+  S 行输入...    
+  在 S 行输入后，后续会输入一个整数 L，表示后续会有 L 行输入，每行一个整数 m，代表删除链表中的第 m 个元素。    
+  L 行输入...
+- 输出描述：  
+  包含多组输出。   
+  每组输出构建的链表，链表元素中用空格隔开，最后一个元素后没有空格。          
+  然后是 S 行输出，每次插入一个元素之后都将链表输出一次，元素之间用空格隔开，最后一个元素后没有空格；      
+  如果插入位置不合法，则输出“Insertion position is invalid.”。     
+  然后是 L 行输出，每次删除一个元素之后都将链表输出一次，元素之间用空格隔开，最后一个元素后没有空格；如果删除元素后链表的长度为0，则不打印链表。    
+  如果删除位置不合法，则输出“Deletion position is invalid.”。    
+  如果链表已经为空，执行删除操作时不需要打印任何数据。
+- 输入示例： 
+    ```text
+        5
+        1 2 3 4 5
+        3
+        4 3
+        3 4
+        9 8
+        2
+        1
+        0
+    ```
+- 输出示例： 
+    ```text
+        1 2 3 3 4 5
+        1 2 4 3 3 4 5
+        Insertion position is invalid.
+        2 4 3 3 4 5
+        Deletion position is invalid.
+    ```
+## 答案  
+```python
+class Node:
+        def __init__(self, data):
+            self.data = data
+            self.next = None
+
+# 链表类定义
+class LinkedList:
+    def __init__(self):
+        self.head_node = None
+        self.length = 0
+    # 尾部insert方法
+    def insert(self, data):
+        self.length += 1
+        new_node = Node(data)
+        if self.head_node is None:
+            self.head_node = new_node
+            return self.head_node
+        else:
+            current_node = self.head_node
+            while current_node.next is not None:
+                current_node = current_node.next
+            current_node.next = new_node
+            return new_node
+
+    # get第n个节点方法
+    def get(self, n):
+        if n < 1 or n > self.length:
+            return None
+        i = 1
+        # 从头节点开始遍历
+        current_node = self.head_node
+        while current_node is not None:
+            if i == n:
+                return current_node
+            i += 1
+            current_node = current_node.next    
+        # 没有找到第n个节点的情况下返回None
+        return None
+
+    # 在第 n 个位置插入元素
+    def insert_at(self, n, data):
+        # 先创建节点
+        new_node = Node(data)
+        if n == 1:  # 头节点的情况
+            new_node.next = self.head_node # 新节点的 next 指向原来的头节点
+            self.head_node = new_node #  新节点成为新的头节点
+            self.length += 1 # 链表长度 + 1
+            return new_node
+        else:  # 不是头节点的情况
+            pre_node = self.get(n - 1) # 使用 get 方法获取要插入位置的前一个节点，命名 pre_node
+            if pre_node is not None:
+                new_node.next = pre_node.next # 将新节点的 next 指针指向 pre_node 的 next 指针
+                pre_node.next = new_node # 将 pre_node 的 next 指针指向新节点
+                self.length += 1 # 链表长度 + 1
+                return new_node
+        return None 
+
+    def delete(self, n):
+        # 判断头节点是否存在=链表是否为空
+        if self.head_node is None:
+            return None
+        if n == 1:
+            deleted_node = self.head_node
+            self.head_node = self.head_node.next
+            self.length -= 1
+            return deleted_node
+        else: 
+            pre_node = self.get(n-1)
+            if pre_node is not None and pre_node.next is not None:
+                deleted_node = pre_node.next
+                # 跳过要删除的节点
+                pre_node.next = pre_node.next.next
+                # 链表长度-1
+                self.length -= 1
+                return deleted_node
+        return None
+        # 表示删除失败
+
+    # 打印链表节点
+    def print_link_list(self):
+        current_node = self.head_node
+        while current_node is not None:
+            if current_node.next is not None:
+                print(current_node.data, end=' ')
+            else:
+                print(current_node.data)
+            current_node = current_node.next
 
 
+k = int(input())
+elements = list(map(int, input().split()))
+link_list = LinkedList()
+for data in elements:
+    link_list.insert(data)
+
+#link_list.print_link_list()
+
+s = int(input())
+for _ in range(s):
+    n, x = map(int, input().split())
+    node = link_list.insert_at(n, x)
+    if node is not None:
+        link_list.print_link_list()
+    else:
+        print("Insertion position is invalid.")
+
+l = int(input())
+for _ in range(l):
+    m = int(input())
+    # 在索引m处删除节点
+    deleted_node = link_list.delete(m)
+    if deleted_node is not None:
+        link_list.print_link_list()
+    else:
+        print("Deletion position is invalid.")   
+```
+
+<font color=red>注意：因为get方法里设置了不符合位置要求的n，会返回None，后面插入、删除使用了get方法，就不需要再判断n是否符合要求。</font>
+## 插入链表的过程
+![alt text](images/15插入链表.png)
+需要具体区分头节点。   
+<font color=red>为什么？</font>：如果不单独处理头节点，就找不到“第一个节点的前一个节点”，代码会出问题。  
+```python
+# 在第 n 个位置插入元素
+def insert_at(self, n, data):
+    # 先创建节点
+    new_node = Node(data)
+    if n == 1:  # 头节点的情况
+        new_node.next = self.head_node # 新节点的 next 指向原来的头节点
+        self.head_node = new_node #  新节点成为新的头节点
+        self.length += 1 # 链表长度 + 1
+        return new_node
+    else:  # 不是头节点的情况
+        pre_node = self.get(n - 1) # 使用 get 方法获取要插入位置的前一个节点，命名 pre_node
+        if pre_node is not None:
+            new_node.next = pre_node.next # 将新节点的 next 指针指向 pre_node 的 next 指针
+            pre_node.next = new_node # 将 pre_node 的 next 指针指向新节点
+            self.length += 1 # 链表长度 + 1
+            return new_node
+    return None 
+    # 表示插入失败
+
+```
+## 删除链表的过程
+需要区分是否有头节点    
+<font color=red>为什么？</font>：如果不单独处理头节点，就找不到“第一个节点的前一个节点”，代码会出问题。 
+- 如果不存在头节点：链表为空，返回None
+- 如果存在头节点，要删除头节点：
+    ![alt text](images/15删除头节点.png)
+- 如果存在头节点，要删除非头节点：
+    ![alt text](images/15删除非头节点.png)
 
 
+```python
+def delete(self, n):
+    # 判断头节点是否存在=链表是否为空
+    if self.headNode is None:
+        return None
+    if n == 1:
+        deleted_node = self.head_n_ode
+        self.head_node = self.head_node.next
+        self.length -= 1
+        return deleted_node
+    else: 
+        pre_node = self.get(n-1)
+        if pre_node is not None and pre_node.next is not None:
+            deleted_node = pre_node.next
+            # 跳过要删除的节点
+            pre_node.next = pre_node.next.next
+            # 链表长度-1
+            self.length -= 1
+            return deleted_node
+    return None
+    # 表示删除失败
 
-
-
-
-
-
-
-
-
-
-
+```
 
 
 
