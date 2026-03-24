@@ -1850,7 +1850,7 @@ for _ in range(l):
         print("Deletion position is invalid.")   
 ```
 
-<font color=red>注意：因为get方法里设置了不符合位置要求的n，会返回None，后面插入、删除使用了get方法，就不需要再判断n是否符合要求。</font>
+<font color="red">注意：因为get方法里设置了不符合位置要求的n，会返回None，后面插入、删除使用了get方法，就不需要再判断n是否符合要求。</font>
 ## 插入链表的过程
 ![alt text](images/15插入链表.png)
 需要具体区分头节点。   
