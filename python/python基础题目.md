@@ -260,7 +260,7 @@ print(sqrt(25))
 - 提示信息：   
   测试数据不仅仅一组。也就是说，会持续输入N以及后面的a和b
 ## 答案：  
-    ```python
+```python
     # for循环
     while True:
         try:
@@ -270,7 +270,7 @@ print(sqrt(25))
                 print(int(a)+int(b))
         except:
             break
-    ```
+```
   
 - 解题过程
     ```python
