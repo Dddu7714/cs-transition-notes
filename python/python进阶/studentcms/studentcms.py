@@ -1,0 +1,192 @@
+
+"""
+该文件用于 完成学生管理系统的 具体业务的操作, 即: 增删改查, 保存学生信息等...
+"""
+# 导包
+from student import Student
+import time
+
+# 1. 创建学生管理系统类.
+class StudentCMS(object):
+
+    # 2. 通过魔法方法init, 初始化属性信息.
+    def __init__(self):
+    ## 创建一个空列表, 用于存储学生信息.
+        self.stu_list = []      # [学生对象, 学生对象, 学生对象] -> [Student(...), Student(...)...]
+
+    # 3. 定义函数, 实现打印 管理系统的界面.
+    ## \t代表缩进 print()打印空行
+
+    def show_view():
+        print('*' * 23)
+        print('学生管理系统V2.0版')
+        print('\t1.添加学生信息')
+        print('\t2.删除学生信息')
+        print('\t3.修改学生信息')
+        print('\t4.查询单个学生信息')
+        print('\t5.查询所有学生信息')
+        print('\t6.保存学生信息')
+        print('\t0.退出系统')
+        print('*' * 23)
+
+    # 4. 定义函数, 实现 添加 学生信息功能.
+    def add_student(self):
+        # 4.1 提示用户输入学生信息, 并接收.
+        name = input('请输入学生姓名:')
+        gender = input('请输入学生性别:')
+        age = int(input('请输入学生年龄:'))
+        phone = input('请输入学生电话:')
+        desc = input('请输入学生描述信息:')
+        # 4.2 把上述的信息封装成学生对象.
+        stu = Student(name, gender, age, phone, desc)
+        # 4.3 把学生对象添加到列表中.
+        self.stu_list.append(stu)
+        # 4.4 提示.
+        print(f'添加 {name} 学生信息成功!\n')
+
+    # 5. 定义函数, 实现 删除 学生信息功能.
+    def del_student(self):
+        # 5.1 提示用户输入要删除的学生的姓名, 并接收.
+        del_name = input('请输入要删除的学生姓名:')
+        # 5.2 遍历对象列表, 找到要删除的学生, 并删除.
+        for stu in self.stu_list:
+            # 5.3 如果当前学生的姓名 和 要删除的学生相同, 就删除该学生信息
+            if stu.name == del_name:
+                    self.stu_list.remove(stu)
+                    print(f'学员 {del_name} 信息删除成功!\n')
+                    break
+        else:
+                    # 走到这里, 说明没有走break, 即: 没有找到这个学生.
+                    print('查无此人, 请检查后重新删除!\n')
+
+    # 6. 定义函数, 实现 修改 学生信息功能.
+    def update_student(self):
+        # 6.1 提示用户输入要修改的学生的姓名, 并接收.
+        upd_name = input('请输入要修改的学生姓名:')
+        # 6.2 遍历列表, 找到要修改的学生, 并修改.
+        for stu in self.stu_list:
+            # 6.3 如果当前学生的姓名 和 要修改的学生相同, 就修改该学生信息
+            if stu.name == upd_name:
+                # 6.4 提示用户录入该学员新的信息.
+                stu.gender = input('请录入修改后的性别: ')
+                stu.age = int(input('请录入修改后的年龄: '))
+                stu.phone = input('请录入修改后的电话: ')
+                stu.desc = input('请录入修改后的描述信息: ')
+    
+                print(f'学员 {upd_name} 信息修改成功!\n')
+                break
+        else:
+                    # 走到这里, 说明没有走break, 即: 没有找到这个学生.
+                    print('查无此人, 请检查后重新操作!\n')
+
+    # 7. 定义函数, 实现 查询单个 学生信息功能.
+    def search_one_student(self):
+        # 7.1 提示用户输入要查找的学生的姓名, 并接收.
+        search_name = input('请输入要查找的学生姓名:')
+        # 7.2 遍历列表, 找到要查找的学生, 并打印信息.
+        for stu in self.stu_list:
+            # 7.3 如果当前学生的姓名 和 要查找的学生相同, 就打印该学生信息
+            if stu.name == search_name:
+                print(stu, end='\n\n')
+                break
+        else:
+                # 走到这里, 说明没有走break, 即: 没有找到这个学生.
+                print('查无此人, 请检查后重新操作!\n')
+
+    # 8. 定义函数, 实现 查询所有 学生信息功能.
+    def search_all_student(self):
+        # 8.1 判断列表长度是否为0, 如果为0, 提示: 暂无学生信息, 请添加后查询.
+        if len(self.stu_list) == 0:
+            print('暂无学生信息, 请添加后查询! \n')
+        else:
+            # 8.2 如果长度不为0, 遍历列表, 打印出所有的学生信息.
+            for stu in self.stu_list:
+                print(stu)
+            print()     # 为了格式好看, 加个换行.
+
+    # 9. 定义函数, 实现 保存 学生信息功能.
+    def save_student(self):
+        # 9.1 关联 学生信息文件.
+        with open('./python/python进阶/studentcms/stu_data.txt', 'w', encoding='utf-8') as dest_f:
+    ##  dest_f表示用它来操作文件
+            # 9.2 把 [学生对象, 学生对象...] -> [字典, 字典...]
+            stu_dict = [stu.__dict__ for stu in self.stu_list]
+            # 9.3 把字典列表, 持久化到文件中.
+            dest_f.write(str(stu_dict)) 
+
+
+    # 10. 定义函数, 实现 加载 学生信息.
+    def load_student(self):
+        # 10.1 加入异常处理, 有可能文件不存在.
+        try:
+            # 10.2 关联学生信息文件.
+            with open('./python/python进阶/studentcms/stu_data.txt', 'r', encoding='utf-8') as src_f:
+                # 10.3 一次性读取所有数据.
+                stu_data = src_f.read()     # 字符串'[字典, 字典...]'
+                # 10.4 把上述的字符串, 转为列表.
+                stu_list = eval(stu_data)   
+            ## 先去掉字符串的单引号''
+            ## ！# 10.5 判断如果列表为空, 就赋予空列表.
+                if len(stu_list) == 0:
+                    stu_list = []
+                # 10.6 把stu_list(列表套字典) 转成 [学生对象, 学生对象...], 并赋值给 self.stu_list
+                self.stu_list = [Student(**stu_dict) for stu_dict in stu_list]
+        except:
+            # 10.7 走这里, 说明目的地文件不存在, 创建即可.
+                with open('./python/python进阶/studentcms/stu_data.txt', 'w', encoding='utf-8') as src_f:
+                    pass
+
+
+    # 11. 定义函数, 把上述的所有业务逻辑跑通.
+    def start(self):
+        # 11.1 加载学生信息
+        self.load_student()
+        # 11.2 死循环, 不断的玩儿.
+        while True:
+            # 11.3 为了效果更明显，加入休眠
+            time.sleep(1)
+            # 11.4 打印 学生管理系统的界面.
+    ## 因为show_view是静态方法
+            StudentCMS.show_view()
+            # 11.5 提示用户录入要操作的编号, 并接收.
+            input_num = input('请输入您要操作的编号:')
+            # 11.6 根据用户输入的编号, 做不同的操作.
+            ## 判断的是字符串，因为input
+            if input_num == '1':
+                # 添加学生信息
+                # print('添加学生信息\n')
+                self.add_student()
+            elif input_num == '2':
+                # 删除学生信息
+                # print('删除学生信息\n')
+                self.del_student()
+            elif input_num == '3':
+                # 修改学生信息
+                # print('修改学生信息\n')
+                self.update_student()
+            elif input_num == '4':
+                # 查询单个学生信息
+                print('查询单个学生信息\n')
+                self.search_one_student()
+            elif input_num == '5':
+                # 查询所有学生信息
+                # print('查询所有学生信息\n')
+                self.search_all_student()
+            elif input_num == '6':
+                # 保存学生信息
+                self.save_student()
+                print('保存学生信息成功\n')
+                
+            elif input_num == '0':
+                # 退出系统, 做二次校验.
+                result = input('您确定要退出吗? (Y/N) -> ')
+                ## 不确定到底大小写，那就转为小写再判断
+                if result.lower() == 'y':       # 字符串的lower() -> 把字母转成小写形式.
+                    # 在退出前，自动保存学生数据到文件
+                    self.save_student()
+                    print('谢谢您的使用, 期待下次再会!')
+                    break
+            else:
+                # 输入错误
+                print('录入有误, 请重新录入!\n')
+
