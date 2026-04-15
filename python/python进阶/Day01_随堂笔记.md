@@ -11,6 +11,29 @@
 1. 面向过程和面向对象的区别？             
    
 
+2. return和print区别？
+   ```python
+    def test():
+        return 'Hi'
+    test()
+    ```
+    Jupyter交互编辑器里会打印出'Hi'，但是运行.py文件只return不能打印出来，如果print会打印出Hi，区别在于是否有单引号。
+
+3. ``for...else...``语法       
+   找到了就break，没找到就else
+   ```python
+    for ...:
+      if ...:
+        ...
+        break
+    else:
+        ...
+   ```
+ 
+4. 字典解包              
+   ``func(**dict)``将字典键值对作为参数传给函数，字典的键必须和函数参数相同，否则报错
+
+
  
 
 
@@ -1101,6 +1124,7 @@ if __name__ == '__main__':
     # print(ts.__money)     ## 报错, 父类私有成员, 子类无法访问.
     ts.set_money(100)
     print(ts.get_money())   ## 通过父类提供的公共的访问方式, 访问父类的私有成员.
+## ！！为什么要print？ return不显示值
 ```
 
 ## 2.4 多态
@@ -1117,7 +1141,7 @@ if __name__ == '__main__':
 
 - 前提条件:     
   1. 要有继承.
-  2. 要有方法重写, 不然多态无意义.
+  2. 要有方法即函数的重写, 不然多态无意义.
   3. 要有父类引用指向子类对象.     
     （python一般不加类型指定，伪多态，不报错，只报警告）      
 
@@ -1258,8 +1282,8 @@ if __name__ == '__main__':
 
     # object_play(h2, h1) # 还是不会报错的，只会报警告
 ```
-
-### 2.4.3 抽象类及案例_空调
+## 2.5 扩展知识点
+### 2.5.1 抽象类及案例_空调
 **抽象类**：          
 - 概述：       
     在Python中, **抽象类 = 接口**, 即: 有抽象方法的类就是 抽象类,也叫 接口.              
@@ -1269,7 +1293,7 @@ if __name__ == '__main__':
 
 ```python
 """
-案例: 演示抽象类的用法.
+08案例: 演示抽象类的用法.
 """
 # 1. 定义抽象类, 空调类, 设定: 空调的规则.
 class AC:
@@ -1329,35 +1353,36 @@ if __name__ == '__main__':
     gree.hot_wind()
     gree.swing_l_r()
 ```
+### 2.5.2 对象属性和类属性
 
-## 对象属性和类型属性解释
+1. 什么是属性
+2. 什么是类属性
+3. 了解类方法和静态方法
 
-* 图解
 
-  ![1741935509782](assets/1741935509782.png)
+**属性**:
+- 概述:              
+          它是1个名词，用来描述事物的外在特征的。
+- 分类:              
+  **对象属性**: 属于每个对象的，即: 每个对象的属性值可能都不同。    修改A对象的属性, 不影响对象B。               
+  **类属性**:   属于类的，即: 能被该类下所有的对象所共享。   A对象修改类属性，B对象访问的是修改后的。    
+  
+**对象属性**:      
+      定义到 ``__init__`` 魔法方法中的属性，每个对象都有自己的内容。    
+      通过 ``对象名.`` 的方式调用。
+  
+**类属性**:     
+      定义到类中，函数外的属性(变量)，能被该类下所有的对象所 *共享*。   
+      既能通过 ``类名.`` 还能通过 ``对象名.`` 的方式来调用，推荐使用 ``类名.`` 的方式。   
+
+![1741935509782](assets/1741935509782.png)
 
 * 代码演示
 
   ```python
   """
-  案例: 演示对象属性 和 类属性.
-  
-  属性介绍:
-      概述:
-          它是1个名词, 用来描述事物的外在特征的.
-      分类:
-          对象属性: 属于每个对象的, 即: 每个对象的属性值可能都不同.  修改A对象的属性, 不影响对象B
-          类属性:   属于类的, 即: 能被该类下所有的对象所共享.  A对象修改类属性, B对象访问的是修改后的.
-  
-  对象属性:
-      定义到 init 魔法方法中的属性, 每个对象都有自己的内容.
-      只能通过 对象名. 的方式调用.
-  
-  类属性:
-      定义到类中, 函数外的属性(变量), 能被该类下所有的对象所共享.
-      既能通过 类名. 还能通过 对象名. 的方式来调用, 推荐使用 类名. 的方式.
+  09案例: 演示对象属性 和 类属性.
   """
-  
   # 需求: 演示 对象属性 和 类属性相关.
   # 1. 定义1个 Student类, 每个学生都有自己的 姓名, 年龄
   class Student:
@@ -1383,8 +1408,8 @@ if __name__ == '__main__':
       s1.name = '许褚'
       s1.age = 40
   
-      print(f's1: {s1}')
-      print(f's2: {s2}')
+      print(f's1: {s1}') # s1变了
+      print(f's2: {s2}') # s2没变
       print('-' * 23)
   
       # 场景2: 类属性
@@ -1395,7 +1420,8 @@ if __name__ == '__main__':
       print('-' * 23)
   
       # 2.尝试用 对象名. 的方式来修改 类属性.
-      # s1.teacher_name = '夯哥'       # 只能给s1对象赋值, 不能给类属性赋值.
+      # s1.teacher_name = '夯哥'       
+      ## 只能给s1增加了一个属性并赋值, 不能给类属性赋值, 
   
       # 3. 如果要修改类变量的值, 只能通过  类名. 的方式实现.
       Student.teacher_name = '夯哥'
@@ -1404,25 +1430,57 @@ if __name__ == '__main__':
       print(Student.teacher_name)     # 夯哥
   ```
 
-## 类方法和静态方法
+### 2.5.3 类方法和静态方法
 
-  ```python
+
+**类方法**:              
+    属于类的方法, 可以通过 ``类名.类方法名`` 还可以通过 ``对象名.`` 的方式来调用.                     
+    定义类方法的时候, 必须使用**装饰器** ``@classmethod``, 且第1个参数必须表示 **类对象**.     
+         
+        @classmethod
+        def 类方法名(cls):
+            ...
+    
+**静态方法**:            
+    属于该类下所有对象所共享的方法, 可以通过 ``类名.`` 还可以通过 ``对象名.`` 的方式来调用.                   
+    定义静态方法的时候, 必须使用**装饰器** ``@staticmethod,`` 且参数传不传都可以.                    
+    (有些函数虽然和类有关，但其实不依赖类和对象)      
+
+**区别**:                    
+    1. 类方法的第1个参数必须是 类对象, 静态方法无参数的特殊要求            
+    2. 你可以理解为: 如果函数中要用 *类对象*, 就定义成*类方法*, 否则定义成 *静态方法*, 除此外, 并无任何区别.
+   
+- 自己的理解：
+```python
+class Student:
+    school = "清华大学"
+
+    def __init__(self, name):
+        self.name = name
+
+    def introduce(self):
+        print(f"我是{self.name}")
+
+    @classmethod
+    def show_school(cls):
+        print(f"学校是{cls.school}")
+
+    @staticmethod
+    def rule():
+        print("学生要遵守校规")
+
+s = Student("小明")
+
+s.introduce()         # 我是小明
+Student.show_school() # 学校是清华大学
+Student.rule()        # 学生要遵守校规
+```
+
+
+```python
 """
-案例: 演示类方法和静态方法.
-
-类方法:
-    属于类的方法, 可以通过 类名. 还可以通过 对象名. 的方式来调用.
-    定义类方法的时候, 必须使用装饰器 @classmethod, 且第1个参数必须表示 类对象.
-
-静态方法:
-    属于该类下所有对象所共享的方法, 可以通过 类名. 还可以通过 对象名. 的方式来调用.
-    定义静态方法的时候, 必须使用装饰器 @staticmethod, 且参数传不传都可以.
-
-区别:
-    1. 类方法的第1个参数必须是 类对象, 静态方法无参数的特殊要求
-    2. 你可以理解为: 如果函数中要用 类对象, 就定义成类方法, 否则定义成 静态方法, 除此外, 并无任何区别.
+10案例: 演示类方法和静态方法.
 """
-
 # 1. 定义学生类.
 class Student:
     # 2. 定义类属性.
@@ -1432,13 +1490,13 @@ class Student:
     @classmethod
     def show1(cls):
         print(f'cls: {cls}')        # <class '__main__.Student'>
-        print(cls.school)
+        print(cls.school)       # 黑马程序员
         print('我是类方法')
 
     # 4. 定义静态方法
     @staticmethod
     def show2():
-        print(Student.school)
+        print(Student.school)           # 黑马程序员
         print('我是静态方法')
 
 
@@ -1448,17 +1506,30 @@ if __name__ == '__main__':
     s1.show1()
     print('-' * 23)
     s1.show2()
-  ```
+```
 
-## 学生管理系统_学生类代码编写
+## 2.6 学生管理系统
 
+1. 学生管理系统的基本需求      
+2. 能对学生管理系统进行角色分析
+3. 能规划学生管理的项目文件
+
+**基本需求**：          
+   -  使用面向对象、字符串、列表、字典、文件等知识点来完成一个学生管理系统
+   -  针对学生，该系统具有添加、修改、删除、查询所有学生、查询某个学生、保存信息、退出系统等操作。     
+   - 需要：学生类、学生管理类、程序主入口
+ 
+![alt text](assets/学生管理系统需求分析.png)
+
+![alt text](assets/学生管理系统角色.png)
+
+### 2.6.1 学生类
 > 如下是写到  **student.py** 文件中的代码
 
 ```python
 """
 该文件用于记录 学生类, 学生的属性信息为: 姓名, 性别, 年龄, 手机号, 描述信息.
 """
-
 # 1. 定义学生类.
 class Student:
     # 2. 定义魔法方法, 初始化属性信息.
@@ -1469,15 +1540,13 @@ class Student:
         :param gender:  性别
         :param age:     年龄
         :param phone:   手机号
-        :param desc:
+        :param desc:    描述信息
         """
         self.name = name
         self.gender = gender
         self.age = age
         self.phone = phone
         self.desc = desc
-
-
     # 3. 定义魔法方法, 用于打印学生信息.
     def __str__(self):
         """
@@ -1485,15 +1554,15 @@ class Student:
         :return:
         """
         return f'姓名: {self.name}, 性别: {self.gender}, 年龄: {self.age}, 手机号: {self.phone}, 描述信息: {self.desc}'
-
-
 # 4. 测试
 if __name__ == '__main__':
     s = Student('乔峰', '男', 38, '13112345678', '丐帮帮主')
     print(s)
 ```
 
-## 学生管理系统_框架搭建
+### 2.6.2 学生管理系统_框架搭建
+
+![alt text](assets/学生管理系统功能.png)
 
 > 如下是写到 **studentcms.py** 文件中的内容.
 
@@ -1501,20 +1570,21 @@ if __name__ == '__main__':
 """
 该文件用于 完成学生管理系统的 具体业务的操作, 即: 增删改查, 保存学生信息等...
 """
-
 # 导包
 from student import Student
-
-
 # 1. 创建学生管理系统类.
 class StudentCMS(object):
+
     # 2. 通过魔法方法init, 初始化属性信息.
     def __init__(self):
-        # 创建一个空列表, 用于存储学生信息.
+    ## 创建一个空列表, 用于存储学生信息.
         self.stu_list = []      # [学生对象, 学生对象, 学生对象] -> [Student(...), Student(...)...]
 
     # 3. 定义函数, 实现打印 管理系统的界面.
-    def show_view(self):
+    ## \t代表缩进 print()打印空行
+    ## 因为该函数中没有使用self, 所以可以把该函数定义为静态方法.
+    @staticmethod
+    def show_view():
         print('*' * 23)
         print('学生管理系统V2.0版')
         print('\t1.添加学生信息')
@@ -1526,32 +1596,31 @@ class StudentCMS(object):
         print('\t0.退出系统')
         print('*' * 23)
 
-
-    # 4. 定义函数, 实现添加学生信息功能.
+    # 4. 定义函数, 实现 添加 学生信息功能.
     def add_student(self):
         pass
 
-    # 5. 定义函数, 实现删除学生信息功能.
+    # 5. 定义函数, 实现 删除 学生信息功能.
     def del_student(self):
         pass
 
-    # 6. 定义函数, 实现修改学生信息功能.
+    # 6. 定义函数, 实现 修改 学生信息功能.
     def update_student(self):
         pass
 
-    # 7. 定义函数, 实现查询单个学生信息功能.
+    # 7. 定义函数, 实现 查询单个 学生信息功能.
     def search_one_student(self):
         pass
 
-    # 8. 定义函数, 实现查询所有学生信息功能.
+    # 8. 定义函数, 实现 查询所有 学生信息功能.
     def search_all_student(self):
         pass
 
-    # 9. 定义函数, 实现保存学生信息功能.
+    # 9. 定义函数, 实现 保存 学生信息功能.
     def save_student(self):
         pass
 
-    # 10. 定义函数, 实现加载学生信息.
+    # 10. 定义函数, 实现 加载 学生信息.
     def load_student(self):
         pass
 
@@ -1566,9 +1635,10 @@ class StudentCMS(object):
             # 11.5 提示用户录入要操作的编号, 并接收.
             input_num = input('请输入您要操作的编号:')
             # 11.6 根据用户输入的编号, 做不同的操作.
+            ## 判断的是字符串，因为input
             if input_num == '1':
                 # 添加学生信息
-                print('添加学生信息\n')
+                # print('添加学生信息\n')
                 self.add_student()
             elif input_num == '2':
                 # 删除学生信息
@@ -1593,14 +1663,13 @@ class StudentCMS(object):
             elif input_num == '0':
                 # 退出系统, 做二次校验.
                 result = input('您确定要退出吗? (Y/N) -> ')
+                ## 不确定到底大小写，那就转为小写再判断
                 if result.lower() == 'y':       # 字符串的lower() -> 把字母转成小写形式.
                     print('谢谢您的使用, 期待下次再会!')
                     break
             else:
                 # 输入错误
                 print('录入有误, 请重新录入!\n')
-
-
 
 # 12. 在main中测试.
 if __name__ == '__main__':
@@ -1610,7 +1679,7 @@ if __name__ == '__main__':
     cms.start()
 ```
 
-## 学生管理系统_入口文件
+### 2.6.3 学生管理系统_入口文件
 
 > 如下的代码是写到 **main.py** 文件中的.
 
@@ -1618,10 +1687,7 @@ if __name__ == '__main__':
 """
 该文件 用作程序的入口文件.
 """
-
 from studentcms import StudentCMS
-
-
 # 程序的主入口
 if __name__ == '__main__':
     # 1. 创建学生管理系统对象.
@@ -1630,9 +1696,9 @@ if __name__ == '__main__':
     stu_cms.start()
 ```
 
-## 学生管理系统_功能实现
+### 2.6.4 学生管理系统_功能实现
 
-* 添加学生
+**4. 添加学生**
 
   ```python
   # 4. 定义函数, 实现添加学生信息功能.
@@ -1651,8 +1717,7 @@ if __name__ == '__main__':
       print(f'添加 {name} 学生信息成功!\n')
   ```
 
-* 查看所有学生信息
-
+**5. 查看所有学生信息**
   ```python
   # 8. 定义函数, 实现查询所有学生信息功能.
   def search_all_student(self):
@@ -1666,26 +1731,26 @@ if __name__ == '__main__':
           print()     # 为了格式好看, 加个换行.
   ```
 
-* 删除学生信息
+**5. 删除学生信息**
 
   ```python
   # 5. 定义函数, 实现删除学生信息功能.
   def del_student(self):
       # 5.1 提示用户输入要删除的学生的姓名, 并接收.
       del_name = input('请输入要删除的学生姓名:')
-      # 5.2 遍历列表, 找到要删除的学生, 并删除.
-      for stu in self.stu_list:
+      # 5.2 遍历对象列表, 找到要删除的学生, 并删除.
+        for stu in self.stu_list:
           # 5.3 如果当前学生的姓名 和 要删除的学生相同, 就删除该学生信息
-          if stu.name == del_name:
-              self.stu_list.remove(stu)
-              print(f'学员 {del_name} 信息删除成功!\n')
-              break
-              else:
-                  # 走到这里, 说明没有走break, 即: 没有找到这个学生.
-                  print('查无此人, 请检查后重新删除!\n')
+            if stu.name == del_name:
+                    self.stu_list.remove(stu)
+                    print(f'学员 {del_name} 信息删除成功!\n')
+                    break
+        else:
+            # 走到这里, 说明没有走break, 即: 没有找到这个学生.
+            print('查无此人, 请检查后重新删除!\n')
   ```
 
-* 修改学生信息
+**6. 修改学生信息**
 
   ```python
   # 6. 定义函数, 实现修改学生信息功能.
@@ -1704,12 +1769,12 @@ if __name__ == '__main__':
   
               print(f'学员 {upd_name} 信息修改成功!\n')
               break
-              else:
+       else:
                   # 走到这里, 说明没有走break, 即: 没有找到这个学生.
                   print('查无此人, 请检查后重新操作!\n')
   ```
 
-* 查询单个学生信息
+**7. 查询单个学生信息**
 
   ```python
   # 7. 定义函数, 实现查询单个学生信息功能.
@@ -1719,24 +1784,22 @@ if __name__ == '__main__':
       # 7.2 遍历列表, 找到要查找的学生, 并打印信息.
       for stu in self.stu_list:
           # 7.3 如果当前学生的姓名 和 要查找的学生相同, 就打印该学生信息
-          if stu.name == search_name:
-              print(stu, end='\n\n')
-              break
-              else:
-                  # 走到这里, 说明没有走break, 即: 没有找到这个学生.
-                  print('查无此人, 请检查后重新操作!\n')
+            if stu.name == search_name:
+                print(stu, end='\n\n')
+                break
+        else:
+                # 走到这里, 说明没有走break, 即: 没有找到这个学生.
+                print('查无此人, 请检查后重新操作!\n')
   ```
 
-## 扩展_dict属性
-
+### 2.6.5 扩展``__dict__``属性——对象和字典的转化
+``__dict__`` 属性介绍:                  
+>    它是Python内置的属性, 可以把 对象 转成 字典 形式.
 ```python
 """
 案例: 演示Python内置的dict属性.
-
-__dict__ 属性介绍:
-    它是Python内置的属性, 可以把对象转成字典形式.
 """
-from 学生管理系统_面向对象版.student import Student
+from studentcms.student import Student
 
 # 需求1: 把 学生对象 -> 字典形式, 属性名做键, 属性值做值.
 s1 = Student('德桦', '男', 81, '111', '刻骨铭心')
@@ -1744,17 +1807,17 @@ print(s1)
 
 # {'name': '德桦', 'gender': '男', 'age': 81, 'phone': '111', 'desc': '刻骨铭心'}
 my_dict = s1.__dict__
-print(my_dict)
-print(type(my_dict))
+print(my_dict) 
+print(type(my_dict))  # 字典格式
 print('-' * 23)
 
 # 需求2: 把 [学生对象, 学生对象, 学生对象] -> [字典, 字典, 字典]
 s1 = Student('德桦', '男', 81, '111', '刻骨铭心')
 s2 = Student('志奇', '男', 22, '222', '我不是紫琦')
 s3 = Student('紫琦', '男', 66, '333', '有请志奇')
-stu_list = [s1, s2, s3]
+stu_list = [s1, s2, s3]     # 直接打印是地址值
 
-# 列表推导式.
+## 列表推导式.
 list_dict = [stu.__dict__ for stu in stu_list]
 print(list_dict)
 print('-' * 23)
@@ -1767,24 +1830,29 @@ print(type(s5))
 print('-' * 23)
 
 s6 = Student(**my_dict)     # 效果同上
+## func(**dict) 将字典键值对作为参数传给函数，字典的键必须和函数参数相同，否则报错
 print(s6)
 print(type(s6))
 ```
 
-## 学生管理学系统_保存学生信息
+### 2.6.6 学生管理学系统_保存和加载学生信息
+- **保存信息**
+![alt text](assets/学生管理系统保存信息.png)
 
 ```python
 # 9. 定义函数, 实现保存学生信息功能.
 def save_student(self):
     # 9.1 关联 学生信息文件.
-    with open('./stu_data.txt', 'w', encoding='utf-8') as dest_f:
+    with open('./python/python进阶/studentcms/stu_data.txt', 'w', encoding='utf-8') as dest_f:
+##  dest_f表示用它来操作文件
         # 9.2 把 [学生对象, 学生对象...] -> [字典, 字典...]
         stu_dict = [stu.__dict__ for stu in self.stu_list]
         # 9.3 把字典列表, 持久化到文件中.
-        dest_f.write(str(stu_dict)) # 记得转成字符串再写入.
+        dest_f.write(str(stu_dict)) 
+## 记得转成字符串再写入.
 ```
 
-## 学生管理系统_加载学生信息
+- **加载信息**
 
 ```python
 # 10. 定义函数, 实现加载学生信息.
@@ -1792,23 +1860,24 @@ def load_student(self):
     # 10.1 加入异常处理, 有可能文件不存在.
     try:
         # 10.2 关联学生信息文件.
-        with open('./stu_data.txt', 'r', encoding='utf-8') as src_f:
+        with open('./python/python进阶/studentcms/stu_data.txt', 'r', encoding='utf-8') as src_f:
             # 10.3 一次性读取所有数据.
-            stu_data = src_f.read()     # '[字典, 字典...]'
+            stu_data = src_f.read()     # 字符串'[字典, 字典...]'
             # 10.4 把上述的字符串, 转为列表.
-            stu_list = eval(stu_data)   # ''
-            # 10.5 判断如果列表为空, 就赋予空列表.
+            stu_list = eval(stu_data)   
+        ## 先去掉字符串的单引号''
+        ## ！# 10.5 判断如果列表为空, 就赋予空列表.
             if len(stu_list) == 0:
                 stu_list = []
-                # 10.6 把stu_list(列表套字典) 转成 [学生对象, 学生对象...], 并赋值给 self.stu_list
-                self.stu_list = [Student(**stu_dict) for stu_dict in stu_list]
-                except:
-                    # 10.7 走这里, 说明目的地文件不存在, 创建即可.
-                    with open('./stu_data.txt', 'w', encoding='utf-8') as src_f:
-                        pass
+            # 10.6 把stu_list(列表套字典) 转成 [学生对象, 学生对象...], 并赋值给 self.stu_list
+            self.stu_list = [Student(**stu_dict) for stu_dict in stu_list]
+    except:
+        # 10.7 走这里, 说明目的地文件不存在, 创建即可.
+            with open('./python/python进阶/studentcms/stu_data.txt', 'w', encoding='utf-8') as src_f:
+                pass
 ```
 
-## 学生管理系统_最终代码
+### 2.6.7 学生管理系统_最终代码
 
 * **student.py** 文件中的代码
 
@@ -2077,5 +2146,300 @@ def load_student(self):
       stu_cms.start()
   ```
 
+# 三、 闭包和装饰器和深浅拷贝
+装饰器就是闭包的一种应用。
 
+## 3.1 闭包入门
+1. 闭包的构成条件
+2. 定义闭包的语法格式
+3. 能编写闭包代码
+
+### 3.1.1 闭包背景介绍
+- 问题：调用完函数后，函数内定义的变量就销毁了，但有时需要保存函数内的这个变量，并在该变量上完成一系列的操作。       
+- 闭包的作用：保存函数内的变量，而不会随着调用完函数而被销毁。    
+  
+```python
+"""
+01案例: 闭包背景介绍
+案例目的:
+    引出来 闭包 相关的知识点.
+"""
+# 需求: 定义函数保存变量10, 调用函数返回值 并 重复累加数值, 观察结果.
+# 1. 定义函数, 保存变量10
+def func():
+    num = 10
+    return num
+
+# 2. 调用函数, 获取返回值.
+num = func()
+print(num + 1)  # 11
+print(num + 1)  # 11
+print(num + 1)  # 11
+```
+
+### 3.1.2 闭包入门
+- **闭包**
+                        
+    >    在函数嵌套的前提下, 内部函数使用了外部函数的变量, 并且外部函数返回了内部函数。     
+    > 
+    >    使用外部函数 变量 的内部函数称为**闭包**.     
+```python
+def 外部函数名(形参列表):
+    外部函数的(局部)变量
+
+    def 内部函数名(形参列表):
+        使用外部函数的变量
+
+    return 内部函数名
+```
+- 闭包的**前提条件**:         
+>   1. 有嵌套：外部函数嵌套内部函数
+>   2. 有引用：内部函数使用外部函数的变量
+>   3. 有返回：外部函数中, 返回 内部函数名(对象)
+    【细节： 函数名 和 函数名() 是两个概念, 前者表示 函数对象, 后者表示 调用函数, 获取返回值.】
+
+
+![1742090722484](assets/1742090722484.png)
+
+```python
+"""
+02案例: 闭包入门.
+"""
+# 案例1: 函数名 -> 是对象
+def get_sum(a, b):
+    return a + b
+
+print(get_sum)  
+# <function get_sum at 0x000001B4AC3DD800>, 对象.
+print(get_sum(10, 20))      # 调用函数, 获取返回值.
+
+## 函数名可以赋值给变量, 这个变量就是: 函数对象.
+my_sum = get_sum
+print(my_sum)   
+# <function get_sum at 0x00000251CE53D800>
+print(my_sum(100, 200))     # 300
+print('-' * 23)
+
+# 案例2: 演示闭包写法.
+# 需求: 定义求和的闭包, 外部函数有参数num1, 内部函数有参数num2, 调用, 求解两数之和, 观察结果.
+
+# 1. 定义外部函数.
+def fn_outer(num1):
+    # 2. 定义内部函数
+    def fn_inner(num2):                 # 有嵌套
+        # 3. 求和
+        sum = num1 - num2               # 有引用
+        print(f'作差结果: {sum}')
+    return fn_inner                     # 有返回
+
+# 4.调用上述的函数
+f = fn_outer(10) # 把对象赋给fn_inner
+f(20)   # -10
+print('-' * 23)
+
+fn_outer(100)(200)  # -100
+```
+
+## 3.1.3 nonlocal关键字介绍
+  
+**nonlocal**:                
+>  它是Python内置的关键字, 可以实现 在内部函数中 修改外部函数的 **变量值**.               
+> （不能修改但是可以打印）
+
+* 图解
+
+  ![1742091801009](assets/1742091801009.png)
+
+* 代码
+
+  ```python
+  """
+  03案例: nonlocal关键字介绍
+  """
+  # 需求: 编写1个闭包,让内部函数访问外部函数的参数 a = 100, 并观察结果.
+  # 1. 定义外部函数.
+  def fn_outer():
+      # 2.定义外部函数的(局部)变量
+      a = 100
+  
+      # 3.定义内部函数, 访问外部函数的变量.
+      def fn_inner():
+          # 4.在内部函数中修改外部函数的变量
+          nonlocal a      
+  ## nonlocal: 可以实现在内部函数中修改外部函数的变量值.
+          a = a + 1
+          # 5. 打印外部函数的变量
+          print(f'a: {a}')
+  
+      # 6. 返回 内部函数名(对象)
+      return fn_inner
+  
+  
+  # 7.测试
+  if __name__ == '__main__':
+      fn_inner = fn_outer()
+      fn_inner()  # 101
+      fn_inner()  # 102
+      fn_inner()  # 103
+  ```
+
+## 3.2 装饰器
+1. 装饰器的作用
+2. 装饰器的构成条件
+3. 装饰器语法
+
+### 3.2.1  装饰器入门
+**装饰器**介绍:          
+- 概述/作用:          
+    - 它的本质是1个闭包函数, 目的是 ‘在不改变原有函数的基础上’ , 对其功能做增强           
+    - 大白话: 装修队 在不改变房屋结构的情况下, 对房屋做装饰(功能增强)
+    -  一般不需要自己写装饰器，都是直接调用写好的             
+- 前提条件:            
+  1. 有嵌套：在函数嵌套的前提下；       
+  2. 有引用：内部函数使用了外部函数的变量(还包括外部函数的参数)；     
+  3. 有返回：外部函数返回了内部函数名；        
+  4. 有**额外**功能：给需要装饰的原有函数增加额外功能。          
+- 装饰器的用法:               
+  - 格式1: **传统写法**
+    > 装饰后的函数名 = 装饰器名(被装饰的原函数名)
+    > 装饰后的函数名()     
+
+     其中，装饰后的函数名是自己命名的。        
+     弊端： 若和原函数名一样，被装饰的原函数就没办法再用了！   
+
+  - 格式2: **语法糖**   （最常用）        
+    > 在要被装饰的原函数上一行, 直接写 ``@装饰器名``, 之后直接调用原函数即可.
+
+
+* 图解
+
+  ![1742094968294](assets/1742094968294.png)
+
+* 代码
+
+  ```python
+  """
+  04案例: 装饰器入门.
+  """
+  # 需求: 在发表评论前, 都是需要先登录的.
+
+  # 1.定义外部函数, 形参列表接收 要被装饰的函数名(对象)
+  def check_login(fn_name):       # fn_name: 被装饰的函数名(对象)
+      # 1.1 定义内部函数.
+      def fn_inner():             # 有嵌套
+          # 1.2 额外功能
+          print('校验登陆... 登陆成功!')
+
+          # 1.3 访问原函数, 即: 外部函数的引用.
+          fn_name()               # 有外部的引用
+      # 1.4 返回内部函数对象.
+      return fn_inner             # 有返回
+  
+  # 2.定义函数, 表示 发表评论.
+  def comment():
+      print("发表评论")
+  
+  @check_login    # 底层其实是: payment = check_login(payment)
+  def payment():
+      print('充值中...')
+  
+  # 3. 测试.
+  # 3.1 传统方式.
+  comment = check_login(comment)
+  comment()
+  print('-' * 23)
+  
+  # 3.2 语法糖
+  # payment = check_login(payment)
+  # payment()
+  payment()
+  
+  ```
+
+### 3.2.2 装饰器案例
+
+* 场景1: ==**无参无返回值的原函数**==
+
+  ![1742097567109](assets/1742097567109.png)
+
+  ```python
+  """
+  案例: 装饰器装饰_无参无返回的原函数
+  
+  细节:
+      装饰器的内部函数格式 要和 被装饰的原函数 保持一致,
+      即: 原函数是无参无返回的, 则 装饰器的内部函数也必须是 无参无返回的.
+          原函数有参有返回的, 则 装饰器的内部函数也必须是 有参有返回的.
+  """
+  
+  # 需求: 定义无参无返回值的 get_sum()求和函数, 在不改变其代码的基础上, 添加友好提示: 正在努力计算中...
+  # 1. 定义装饰器.
+  def my_decorator(fn_name):
+      # 1.1 定义内部函数, 其格式必须和 被装饰的原函数 保持一致.
+      def fn_inner():                 # 有嵌套
+          # 1.2 添加提示信息(额外功能)
+          print('正在努力计算中...')     # 有额外功能
+          # 1.3 调用原函数.
+          fn_name()                   # 有引用
+      # 1.4 返回内部函数(对象)
+      return fn_inner                 # 有返回
+  
+  
+  # 2. 定义原函数.
+  @my_decorator
+  def get_sum():
+      a = 10
+      b = 20
+      sum = a + b
+      print(f'sum求和结果: {sum}')
+  
+  
+  # 3.测试.
+  # 3.1 传统方式.
+  # get_sum = my_decorator(get_sum)
+  # get_sum()
+  
+  # 3.2 语法糖.
+  get_sum()
+  ```
+
+* 场景2: ==**有参无返回值的原函数**==
+
+  ```python
+  """
+  案例: 装饰器装饰_有参无返回的原函数
+  
+  细节:
+      装饰器的内部函数格式 要和 被装饰的原函数 保持一致,
+      即: 原函数是无参无返回的, 则 装饰器的内部函数也必须是 无参无返回的.
+          原函数有参有返回的, 则 装饰器的内部函数也必须是 有参有返回的.
+  """
+  
+  # 需求: 定义有参无返回值的 get_sum()求和函数, 在不改变其代码的基础上, 添加友好提示: 正在努力计算中...
+  # 1. 定义装饰器.
+  def my_decorator(fn_name):
+      # 1.1 定义内部函数
+      def fn_inner(x, y):
+          # 1.2 额外功能
+          print('正在努力计算中...')
+          # 1.3 调用原函数.
+          fn_name(x, y)
+      # 1.4 返回内部函数.
+      return fn_inner
+  
+  # 2. 定义原函数, 有参无返回值.
+  @my_decorator
+  def get_sum(a, b):
+      sum = a + b
+      print(f'sum求和结果: {sum}')
+  
+  
+  # 3.测试.
+  # 3.1 传统方式.
+  # get_sum = my_decorator(get_sum)
+  # get_sum(10, 20)
+  
+  # 3.2 语法糖.
+  get_sum(10, 20)
+  ```
 
