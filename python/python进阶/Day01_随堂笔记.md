@@ -31,7 +31,9 @@
    ```
  
 4. 字典解包              
-   ``func(**dict)``将字典键值对作为参数传给函数，字典的键必须和函数参数相同，否则报错
+   ``func(**dict)``将字典键值对作为参数传给函数，字典的键必须和函数参数相同，否则报错，                
+    :param args: 数字元组, ``*args`` -> 接收所有的位置参数, 封装到 元组                      
+    :param kwargs: 字典, 键是字符串, 值是数字, ``**kwargs`` -> 接收所有的关键字参数, 封装到 字典
 
 
  
@@ -2308,7 +2310,9 @@ fn_outer(100)(200)  # -100
      弊端： 若和原函数名一样，被装饰的原函数就没办法再用了！   
 
   - 格式2: **语法糖**   （最常用）        
-    > 在要被装饰的原函数上一行, 直接写 ``@装饰器名``, 之后直接调用原函数即可.
+    > 在要被装饰的原函数上一行, 直接写 ``@装饰器名``, 之后直接调用原函数即可.       
+
+    语法糖写法中，装饰器要写在被定义的函数之前。    
 
 
 * 图解
@@ -2364,11 +2368,11 @@ fn_outer(100)(200)  # -100
 
   ```python
   """
-  案例: 装饰器装饰_无参无返回的原函数
+  05案例: 装饰器装饰_无参无返回的原函数
   
   细节:
       装饰器的内部函数格式 要和 被装饰的原函数 保持一致,
-      即: 原函数是无参无返回的, 则 装饰器的内部函数也必须是 无参无返回的.
+      即: 原函数是无参无返回的, 则 装饰器的内部函数也必须是 无 参无返回的.
           原函数有参有返回的, 则 装饰器的内部函数也必须是 有参有返回的.
   """
   
@@ -2384,7 +2388,6 @@ fn_outer(100)(200)  # -100
       # 1.4 返回内部函数(对象)
       return fn_inner                 # 有返回
   
-  
   # 2. 定义原函数.
   @my_decorator
   def get_sum():
@@ -2392,7 +2395,6 @@ fn_outer(100)(200)  # -100
       b = 20
       sum = a + b
       print(f'sum求和结果: {sum}')
-  
   
   # 3.测试.
   # 3.1 传统方式.
@@ -2407,7 +2409,7 @@ fn_outer(100)(200)  # -100
 
   ```python
   """
-  案例: 装饰器装饰_有参无返回的原函数
+  06案例: 装饰器装饰_有参无返回的原函数
   
   细节:
       装饰器的内部函数格式 要和 被装饰的原函数 保持一致,
@@ -2433,7 +2435,6 @@ fn_outer(100)(200)  # -100
       sum = a + b
       print(f'sum求和结果: {sum}')
   
-  
   # 3.测试.
   # 3.1 传统方式.
   # get_sum = my_decorator(get_sum)
@@ -2442,4 +2443,1351 @@ fn_outer(100)(200)  # -100
   # 3.2 语法糖.
   get_sum(10, 20)
   ```
+
+* 场景3: ==**无参有返回值的原函数**==
+
+```python
+"""
+07案例: 装饰器装饰_无参有返回的原函数
+"""
+# 需求: 定义无参有返回值的 get_sum()求和函数, 在不改变其代码的基础上, 添加友好提示: 正在努力计算中...
+# 1. 定义装饰器.
+def my_decorator(fn_name):      # fn_name: 被装饰的原函数名
+    # 1.1 定义内部函数.
+    def fn_inner():
+        # 1.2 额外功能
+        print('正在努力计算中...')
+        # 1.3 有引用.
+        return fn_name()   # 返回内部函数的执行结果
+    # 1.4 有返回, 把 内部函数对象 作为外部函数的执行结果进行返回.
+    return fn_inner
+
+# 2. 定义原函数(即:要被装饰的函数)
+def get_sum():
+    a = 11
+    b = 22
+    return a + b
+
+# 3. 测试
+# 3.1 传统写法.
+get_sum = my_decorator(get_sum)     # 本质 get_sum = fn_inner
+sum = get_sum()
+print(f'求和结果: {sum}')
+```
+
+* 场景4: ==**有参有返回值的原函数**==
+
+```python
+"""
+08案例: 装饰器装饰_有参有返回的原函数
+"""
+# 需求: 定义有参有返回值的 get_sum()求和函数, 在不改变其代码的基础上, 添加友好提示: 正在努力计算中...
+
+# 1. 定义装饰器.
+def my_decorator(fn_name):      # fn_name: 被装饰的原函数名
+    # 1.1 定义内部函数.
+    def fn_inner(x, y):
+        # 1.2 额外功能
+        print('正在努力计算中...')
+        # 1.3 有引用.
+        return fn_name(x, y)
+    # 1.4 有返回, 把 内部函数对象 作为外部函数的执行结果进行返回.
+    return fn_inner
+
+# 2. 定义原函数(即:要被装饰的函数)
+@my_decorator
+def get_sum(a, b):
+    return a + b
+
+# 3. 测试
+# 3.1 传统写法.
+# get_sum = my_decorator(get_sum)
+# sum = get_sum(10, 20)
+# print(f'求和结果: {sum}')
+
+# 3.2 装饰器写法.
+print(get_sum(10, 20))
+```
+* 场景5: ==**可变参数**==               
+  【重要】
+
+```python
+"""
+09案例: 装饰器装饰_可变参数
+"""
+# 需求: 定义1个可以计算多个数据和字典value值和的函数, 并给其友好提示.
+# 1. 定义装饰器.
+def my_decorator(fn_name):
+    # 1.1 定义内部函数.
+    def fn_inner(*args, **kwargs):
+        # 1.2 额外功能.
+        print("正在努力计算中...")
+        # 1.3 调用原函数.
+        return fn_name(*args, **kwargs)
+    # 1.4 返回内部函数对象.
+    return fn_inner
+
+# 2. 定义原函数.
+@my_decorator
+def get_sum(*args, **kwargs):
+    """
+    该函数用于计算 数字元组 和 字典value值 之和.
+    :param args: 数字元组, *args -> 接收所有的位置参数, 封装到 元组
+    :param kwargs: 字典, 键是字符串, 值是数字, **kwargs -> 接收所有的关键字参数, 封装到 字典
+    :return: 结果之和.
+    """
+    # 2.1 定义求和变量.
+    sum = 0
+    # 2.2 遍历元组, 获取每个元素, 求和.
+    for i in args:
+        sum += i
+    # 2.3 遍历字典, 获取到每个值.
+    for v in kwargs.values():
+        sum += v
+    # 2.4 返回结果
+    return sum
+
+    # 上述代码可以优化如下:
+    # return sum(args) + sum(kwargs.values())
+
+# 3. 测试.
+sum = get_sum(1, 2, 3, a=4, b=5, c=6)
+print(sum)
+
+```
+### 3.2.3 多个装饰器的使用
+多个装饰器装饰一个原函数，传统写法**由近及远、由内向外**装饰，但如果你要是用 装饰器的写法来做, 看到的效果是: **从上往下**执行的            
+
+* 场景6: ==**多个装饰器装饰1个函数**==    
+
+    ```python
+    """
+    10案例: 演示多个装饰器装饰1个函数.
+    """
+    # 需求: 发表评论前, 需要先登录, 再验证验证码. 请用所学, 模拟该功能.
+    # 1. 定义装饰器, 表示: 登录
+    def check_login(fn_name):
+        # 1.1 定义内部函数.
+        def fn_inner():
+            # 1.2 额外功能
+            print('校验登陆!')
+            # 1.3 有引用.
+            fn_name()
+        # 1.4 返回内部函数.
+        return fn_inner
+
+
+    # 2. 定义装饰器, 表示: 验证验证码
+    def check_code(fn_name):
+        # 2.1 定义内部函数.
+        def fn_inner():
+            # 2.2 额外功能
+            print('校验验证码!')
+            # 2.3 有引用.
+            fn_name()
+        # 2.4 有返回
+        return fn_inner
+
+
+    # 3. 定义原函数, 表示: 发表评论
+    # @check_login
+    # @check_code
+    def comment():
+        print('发表评论')
+
+
+    # 4. 测试.
+    # 4.1 传统写法.
+    # comment = check_code(comment)
+    # comment = check_login(comment)
+    # comment()
+
+    cc = check_code(comment)
+    cl = check_login(cc)
+    cl()
+
+    # 4.2 语法糖
+    # comment()
+    ```
+
+* 场景7: ==**1个装饰器装饰多个函数**==   （装饰器再包裹一层）
+
+  1.  1个装饰器的参数有且只能有 **1个**.         
+  2.  如果装饰器有**多个参数**, 可以在该装饰器的外边再包裹一层, 把该装饰器当作其 *内部函数* 返回即可.
+  3.  多个函数的格式（是否有参、是否有返回）要保持一致     
+     
+     
+  ```python
+  """
+  11案例: 演示 带参数的装饰器.
+  """
+  # 需求: 定义1个既能装饰减法, 又能装饰加法的装饰器 -> 即: 带有参数的装饰器.
+  # 1. 定义装饰器.
+  # fn_name: 原函数名.  flag: 标记    
+  # 语法糖报错, 装饰器的参数只能有1个.
+  # def my_decorator(fn_name, flag):
+  ## 传统写法未报错！正常
+  # def my_decorator(fn_name, flag):
+  #     def fn_inner(a, b):
+  #         if flag == '+':
+  #             print('正在努力计算 [加法] 中...')
+  #         elif flag == '-':
+  #             print('正在努力计算 [减法] 中...')
+
+  #         return fn_name(a, b)
+  #     return fn_inner
+
+  # def get_sum(a, b):
+  #     return a + b
+
+  # def get_sub(a, b):
+  #     return a - b
+
+  # get_sum = my_decorator(get_sum, '+')
+  # print(get_sum(10, 20))
+  # print('-' * 23)
+  # get_sub = my_decorator(get_sub, )
+  # print(get_sub(10, 5))
+  ## 输出：
+  # 正在努力计算 [加法] 中...
+  # 30
+  # -----------------------
+  # 正在努力计算 [减法] 中...
+  # 5
+
+  def logging(flag):
+      def my_decorator(fn_name):
+          # 1.1 定义内部函数, 格式要和 原函数保持一致.
+          def fn_inner(a, b):
+              # 1.2 增加额外功能.
+              if flag == '+':
+                  print('正在努力计算 [加法] 中...')
+              elif flag == '-':
+                  print('正在努力计算 [减法] 中...')
+
+              # 1.3 有引用.
+              return fn_name(a, b)
+          # 1.4 有返回.
+          return fn_inner
+      # 返回 my_decorator函数.
+      return my_decorator
+
+  # 2. 定义原函数, 表示: 加法运算.
+  @logging('+')
+  def get_sum(a, b):
+      return a + b
+
+  # 3. 定义原函数, 表示: 减法运算.
+  @logging('-')
+  def get_sub(a, b):
+      return a - b
+
+  # 4. 测试.
+  print(get_sum(10, 20))
+  print('-' * 23)
+
+  print(get_sub(10, 5))
+  ```   
+
+
+* 场景8: ==**1个装饰器装饰多个函数**==   （优化版）
+  
+    ```python
+    """
+    12案例: 演示 带参数的装饰器优化版, 合理利用参数.
+    """
+    # 需求: 定义1个既能装饰减法, 又能装饰加法的装饰器 -> 即: 带有参数的装饰器.
+    def my_decorator(fn_name):
+        def fn_inner(a, b):
+            if fn_name.__name__ == 'get_sum':
+                print('正在努力计算 [加法] 中...')
+            elif fn_name.__name__ == 'get_sub':
+                print('正在努力计算 [减法] 中...')
+
+            return fn_name(a, b)
+        return fn_inner
+
+    @my_decorator
+    def get_sum(a, b):
+        return a + b
+
+    @my_decorator
+    def get_sub(a, b):
+        return a - b
+
+    print(get_sum(10, 20))
+    print('-' * 23)
+
+    print(get_sub(10, 5))
+    ```
+
+
+## 3.3 深浅拷贝（面试！）
+
+### 3.3.1 可变与不可变类型
+- **不可变对象**：一旦创建就不可修改的对象，包括*字符串、元组、数值类型（整型、浮点型）*                    
+  该对象所指向的内存中的值不能被改变。当改变某个变量时，由于其所指的值不能被改变，相当于把原来的值复制一份后再改变，这会开辟一个**新的地址**，变量再指向这个新的地址。           
+
+- **可变对象**：可以修改的对象，包括*列表、字典、集合*                        
+  该对象所指向的内存中的值可以被改变。变量（准确说是引用）改变后，实际上是所指的值直接发生改变，并没有发生复制行为，也没有开辟新的地址，通俗点说就是**原地改变**。         
+
+  ### 3.3.2 变量赋值执行原理
+  python解释器干的事：
+    ``a = 'python' ``  
+    1. 创建变量a
+    2. 创建一个对象（分配一块内存），来存储值'python'      
+    3. 将变量与对象，通过指针连接起来，从变量到对象的链接称之为引用（变量引用对象）           
+   
+
+### 3.3.3 深浅拷贝    
+总结:                    
+ 1. 所谓的深浅拷贝分别指的是:             
+     - 浅拷贝: copy模块的copy()
+     - 深拷贝: copy模块的deepcopy()函数
+ 2. 大白话解释深浅拷贝:                                        
+     - 深拷贝拷贝的多, 浅拷贝拷贝的少.
+ 3. - 重要！！！深浅拷贝主要是针对于 **可变类型** 来讲的, 深拷贝拷贝所有层(可变), 浅拷贝只拷贝第1层(可变)            
+    - 如果是针对于**不可变类型**, 则用法和 *普通赋值* 一样, 并无区别.
+ 4. 普通赋值：    
+    - 内存一样
+
+深浅拷贝分别拷贝可变和不可变      
+
+
+1. 赋值
+    ![alt text](assets/深浅拷贝赋值.png)
+2. 浅拷贝可变
+   ![alt text](assets/浅拷贝可变.png)
+3. 浅拷贝不可变
+   ![alt text](assets/浅拷贝不可变.png)
+4. 深拷贝可变
+   ![alt text](assets/深拷贝可变.png)
+```python
+"""
+13案例: 深浅拷贝.
+"""
+# 导包
+import copy
+# python的赋值操作属于引用赋值(eg:b是a的别名, 形参是实参的别名)
+def dm01_普通赋值():
+    # 普通赋值之 不可变类型
+    a = 10
+    b = a
+    print('id(a)-->', id(a))    # 0x01
+    print('id(b)-->', id(b))    # 0x01
+    print('id(10)-->', id(10))  # 0x01
+
+    # 普通赋值之 可变类型
+    a = [1, 2, 3]
+    b = [11, 22, 33]
+    c = [a, b]
+    d = c
+    print('id(c)-->', id(c))    # 0x02
+    print('id(d)-->', id(d))    # 0x02
+
+# 浅拷贝可变类型: 只拷贝第1层数据, 深层次数据不拷贝
+def dm02_浅拷贝可变类型():
+    a = [1, 2, 3]               # 0x01
+    b = [11, 22, 33]            # 0x02
+    c = [6, 7, a, b]            # 0x03
+
+    d = copy.copy(c)    # 浅拷贝
+
+    print('id(c)-->', id(c))    # 0x03
+    print('id(d)-->', id(d))    # 0x04
+
+    # 测试2
+    print(id(c[2]))             # 0x01
+    print(id(a))                # 0x01
+
+    # 修改a[2] = 22
+    a[2] = 22
+    print('c->', c)             # [6, 7, [1, 2, 22], [11, 22, 33]]
+    print('d->', d)             # [6, 7, [1, 2, 22], [11, 22, 33]]
+    ## 如果改了c[1]不会影响d，本质是浅拷贝不可变
+
+# 浅拷贝不可变类型: 不会给拷贝的对象c开辟新的内存空间, 而只是拷贝了这个对象的引用
+def dm03_浅拷贝不可变类型():
+
+    # 不可变类型 a b c
+    a = (1, 2, 3)               # 0x01
+    b = (11, 22, 33)            # 0x02
+    c = (6, 7, a, b)            # 0x03
+
+    d = copy.copy(c)
+    print('id(c)-->', id(c))    # 0x03
+    print('id(d)-->', id(d))    # 0x03
+
+
+# 深拷贝可变类型: 若为 可变类型 开辟新的内存空间,所有层都会深拷贝
+# 作用: 能保证数据的安全
+def dm04_深拷贝可变类型():
+    a = [1, 2, 3]               # 0x01
+    b = [11, 22, 33]            # 0x02
+    c = [6, 7, a, b]            # 0x03
+
+    d = copy.deepcopy(c)    # 深拷贝
+    print('id(c)-->', id(c))    # 0x03
+    print('id(d)-->', id(d))    # 0x04
+
+    a[1] = 100
+    b[1] = 800
+    print(f'c: {c}')    # [6, 7, [1, 100, 3], [11, 800, 33]]
+    print(f'd: {d}')    # [6, 7, [1, 2, 3], [11, 22, 33]]
+    print('id(c[2])-->', id(c[2]))  ##0x01 与a的ID一样
+    print('id(d[2])-->', id(d[2]))  ##0x05
+
+# 深拷贝不可变类型: 若为不可变类型直接就引用了, 不开辟新的内存空间
+def dm05_深拷贝不可变类型():
+    a = (1, 2, 3)           # 0x01
+    b = (11, 22, 33)        # 0x02
+    c = (6, 7, a, b)        # 0x03
+
+    d = copy.deepcopy(c)
+    print(id(c))            # 0x03
+    print(id(d))            # 0x03
+
+# 在main函数中测试
+if __name__ == '__main__':
+    # dm01_普通赋值()
+    # dm02_浅拷贝可变类型()          # 多看看
+    # dm03_浅拷贝不可变类型()
+    # dm04_深拷贝可变类型()        # 多看看
+    dm05_深拷贝不可变类型()
+
+```
+
+# 四、 迭代器和生成器
+
+## 4.1 迭代器
+
+### 4.1.1 迭代器入门
+**迭代器**：python中的一种对象，用于在数据集合中逐个访问元素，而不需要暴露数据集合的底层实现，它提供了一种遍历集合元素的标准方式，适用于任何支持迭代的数据结构，如列表、元组等，``range()``就是一个迭代器。       
+
+- 概述:           
+        自定义的类, 只要重写了``__iter__()`` 和 ``__next__()`` 方法, 就可以称为 迭代器.
+- 目的:                      
+        隐藏底层的逻辑, 让用户使用更方便.           
+        惰性加载, 用的时候才会获取.                
+
+```python
+"""
+05案例: 演示自定义迭代器.
+回顾: for循环格式
+    for i in 可迭代类型:
+        pass
+"""
+# 需求: 模拟range(1, 6), 自定义 迭代器实现同等逻辑.
+# 场景1: 回顾 range()用法.
+for i in range(1, 6):
+    print(i)
+print('-' * 23)
+
+# 场景2: 自定义迭代器.
+# 1. 自定义 迭代器类.
+class MyIterator:
+    # 2. 通过init魔法方法, 初始化属性, 指定: 范围.
+    def __init__(self, start, end):
+        self.current_value = start      # 当前值, 默认为 开始值.
+        self.end = end                  # 结束值.
+
+    # 3. 重写iterator魔法方法, 返回当前对象(即: 迭代器对象).
+    def __iter__(self):
+        return self
+
+    # 4. 重写next魔法方法, 返回当前值, 并更新当前值.
+    def __next__(self):
+        # 4.1 判断当前值范围是否合法.
+        if self.current_value >= self.end:
+            raise StopIteration     # 抛出异常, 迭代结束.
+
+        # 4.2 走这里, 说明当前值合法, 返回当前值, 并更新当前值.
+        # value = self.current_value      # value =               1   2   3   4   5
+        # self.current_value += 1         # self.current_value =  2   3   4   5   6
+        # return value                    #                       1   2   3   4   5
+
+        # 效果同上, 代码更简单
+        self.current_value += 1          # self.current_value =  2   3   4   5   6
+        return self.current_value - 1    #                       1   2   3   4   5
+
+# 5. 创建迭代器对象, 并遍历.
+# 5.1 for循环
+for i in MyIterator(1, 6):
+    print(i)
+print('-' * 23)
+
+# 5.2 next()函数
+my_itr = MyIterator(10, 13)
+print(next(my_itr)) # 10
+print(next(my_itr)) # 11
+print(next(my_itr)) # 12
+# print(next(my_itr)) # raise StopIteration     # 抛出异常, 迭代结束.
+```
+
+## 4.2 生成器
+
+### 4.2.1 生成器介绍
+
+**生成器**介绍:
+- 概述:                      
+        根据程序员制定的规则循环生成数据，当条件不成立时则生成数据结束。*数据不是一次性全部生成出来*，而是使用一个，再生成一个         
+        
+- 目的:          
+        可以节省大量的内存.                   
+- 实现方式:                  
+        1. 推导式写法.                         
+        2. ``yield``关键字
+
+### 4.2.2 生成器-推导式写法
+* **06案例: 推导式写法**
+
+  ```python
+  """
+  案例: 演示生成器之 推导式写法.
+  """
+  import sys      # system: 系统模块
+  
+  # 场景1: 生成器 推导式写法.
+  # 需求1: 生成1 ~ 10之间的整数.
+  my_generator = (i for i in range(1, 11))
+  ## 没有元组推导式的概念，本质是一个生成器
+  print(my_generator)
+  print(type(my_generator))   # <class 'generator'>
+  print('-' * 23)
+  
+  # 需求2: 生成 1 ~ 10 之间的偶数.
+  my_gt2 = (i for i in range(1, 11) if i % 2 == 0)
+  print(my_gt2)
+  print('-' * 23)
+  
+  # 需求3: 如何从生成器中获取数据.
+  # 思路1: next()
+  print(next(my_gt2))     # 2
+  print(next(my_gt2))     # 4
+  print('*' * 23)
+  for i in my_gt2:
+      print(i)            # 6, 8, 10
+  print('-' * 23)
+  
+  # 验证 生成器的目的 就是可以减少内存占用.
+  ## 如果数很小的话，反而是生成器所占内存大
+  my_list = [i for i in range(1000000)]
+  my_gt3 = (i for i in range(1000000))
+  print(type(my_list), type(my_gt3))
+  # 一个是列表，一个是生成器
+  
+  # 查看my_list的内存空间占用.
+  print(f'my_list的内存占用: {sys.getsizeof(my_list)}')    # 89095160
+  print(f'my_gt3的内存占用: {sys.getsizeof(my_gt3)}')      # 192
+  print('-' * 23)
+  
+  ```
+
+### 4.2.3 生成器-``yield``关键字写法
+* **07案例: yield关键字**                        
+  定义函数时，里面有``yield``关键字，那么就是生成器。               
+  ```python
+    # yield在这里做了三件事儿: 
+    # 1.创建生成器对象.  
+    # 2.把值存储到生成器中.  
+    # 3.返回生成器.
+    for i in range(1, 11):
+        yield i
+  ```   
+
+  ```python
+  """
+  07案例: 演示生成器之 推导式写法.
+  """
+  # 需求: 通过yield方式, 获取到生成器之 1 ~ 10之间的整数.
+  # 回顾: 推导式写法.
+  my_g = (i for i in range(1, 11))
+  
+  # yield方式如下.
+  # 1.定义函数, 存储到生成器中, 并返回.
+  def my_fun():
+      # my_list = []              # 创建
+      # for i in range(1, 11):
+      #     my_list.append(i)     # 添加
+      # return my_list            # 返回
+  
+      # 效果类似于上边的代码.
+      # yield在这里做了三件事儿: 1.创建生成器对象.  2.把值存储到生成器中.  3.返回生成器.
+      for i in range(1, 11):
+          yield i
+  
+  # 2.测试.
+  my_g2 = my_fun()
+  print(type(my_g2))  # <class 'generator'>
+  
+  print(next(my_g2))
+  print(next(my_g2))
+  print('-' * 23)
+  for i in my_g2:
+      print(i)
+  ```
+
+### 4.2.4 生成器案例-歌词
+* **08案例: 批量歌词**
+
+  ```python
+  """
+  08案例: 基于传入的数值(每批次的歌词条数), 创建 生成器, 生成批次歌词.
+  """
+  import math
+  
+  # 需求: 基于文件中 周杰伦的歌词, 创建生成器, 根据传入的每批次的歌词条数, 生成歌词批次.
+  # 1. 定义函数, 接收 每批次的歌词条数, 返回生成器.
+  def dataset_loader(batch_size):     # 假设是 8条/批次
+      """
+      自定义的 歌词 批量生成器
+      :param batch_size:  每批次的歌词条数
+      :return: 生成器, 每个元素都是一批次的数据, 例如: (8条, 8条, 8条...)
+      """
+      # 1.1 读取文件数据.
+      with open('./python/python进阶/jaychou_lyrics.txt', 'r', encoding='utf-8') as src_f:
+          # 1.2 一次读取所有行.
+          # lines = [line.strip() for line in src_f.readlines()]
+          lines = src_f.readlines()
+  
+          # 1.3 计算批次总数, 假设: 5批
+          total_batch = math.ceil(len(lines) / batch_size)
+  
+          # 1.4 for循环方式, 获取到每批次的数据, 放到生成器中, 并返回.
+          for idx in range(total_batch):      # idx的值: 0, 1, 2, 3, 4
+              # 第1批歌词, 批次索引(idx=0), 歌词为: 第1条 ~ 第8条, 索引为: 0 ~ 7
+              # 第2批歌词, 批次索引(idx=1), 歌词为: 第9条 ~ 第16条, 索引为: 8 ~ 15
+              # 第3批歌词, 批次索引(idx=2), 歌词为: 第17条 ~ 第24条, 索引为: 16 ~ 23
+              yield lines[idx * batch_size : idx * batch_size + batch_size]      # 第1批
+  
+  
+  # 2. 测试.
+  dl = dataset_loader(8)
+  print(next(dl)) # 第1批
+  print(next(dl)) # 第2批
+  
+  for batch_data in dl:
+      print(batch_data)
+  ```
+
+## 4.3 Property属性         
+
+**property属性**介绍:                 
+- 概述/目的/作用:               
+    把 *函数* 当做 *属性* 来使用.           
+- 实现方式:
+    - 方式1: 装饰器.
+    - 方式2: 类属性.
+
+### 4.3.1 property属性——装饰器用法
+
+property的装饰器用法:                       
+     ``@property``               修饰 获取值的函数                
+    ``@获取值的函数名.setter``     修饰 设置值的函数             
+之后, 就可以直接 ``.上述的函数名`` 来当做变量直接用.
+
+
+* **场景1: 装饰器用法**
+  ```python
+  """
+  09案例: 演示property属性的用法.
+
+  property的装饰器用法:
+      @property               修饰 获取值的函数
+      @获取值的函数名.setter     修饰 设置值的函数
+  
+      之后, 就可以直接 .上述的函数名 来当做变量直接用.
+  """
+  # 需求: 定义学生类, 私有属性 age, 通过property实现简化调用.
+  # 1. 定义学生类.
+  class Student:
+      # 1.1 私有属性.
+      def __init__(self):
+          self.__age = 18
+
+    # ## 旧的获取和设置的方法——封装
+    #  def get_age(self):
+    #      return self.__age 
+
+    #  def set_age(self, age):
+    #      self.__age = age
+  
+      # 1.2 提供公共的方式方式
+      @property
+      def age(self):
+          return self.__age
+  
+      @age.setter
+      def age(self, age):
+          # 可以在这里对传入的age值做判断, 但是一般不做, 重要字段才会做判断.
+          # 因为实际开发中数据是从前端传过来的, 已经做过判断了, 这里做属于二次校验.
+          self.__age = age
+  
+  # 2. 测试
+  if __name__ == '__main__':
+      # 2.1 创建学生对象.
+      s = Student()
+      # 2.2. 设置值
+      # s.get_age(20)
+      s.age = 20
+      # 2.3 获取值
+      # print(s.get_age())
+      print(s.age)
+  ```
+### 4.3.2 property属性——类属性用法   
+property类属性的用法:                      
+     ``类属性名 = property(获取值的函数名, 设置值的函数名)``                     
+之后, 就可以直接 ``.上述的函数名`` 来当做变量直接用.
+
+
+* **场景2: 类属性**
+
+  ```python
+  """
+  10案例: 演示property属性的用法.
+
+  property的装饰器用法:
+      @property               修饰 获取值的函数
+      @获取值的函数名.setter     修饰 设置值的函数
+  
+  property类属性的用法:
+      类属性名 = property(获取值的函数名, 设置值的函数名)
+  
+      之后, 就可以直接 .上述的函数名 来当做变量直接用.
+  """
+  
+  # 需求: 定义学生类, 私有 age属性, 通过property充当类属性用.
+  # 1. 定义学生类.
+  class Student:
+      # 1.1 私有age属性.
+      def __init__(self):
+          self.__age = 20
+  
+      # 1.2 公共的访问方式.
+      def get_age(self):
+          return self.__age
+  
+      def set_age(self, age):
+          self.__age = age
+  
+      # 1.3 封装上述的公共方式为 类属性
+      # 参1: 获取值的函数名,    参2: 设置值的函数名
+      age = property(get_age, set_age)
+  
+  # 2. 测试
+  if __name__ == '__main__':
+      # 2.1 创建学生对象.
+      s = Student()
+      # 2.2. 设置值
+      s.age = 99
+      # 2.3 获取值
+      print(s.age)
+  ```
+
+## 4.4 正则表达式（能看懂，不看了）
+
+### 4.4.1 正则表达式入门
+(软件：RegexBuddy)             
+
+**正则表达式**:
+- 概述:                             
+    正确的, 符合特定规则的 字符串.                            
+    Regular Expression, 正则表达式, 简称: re
+- 细节:                          
+      1. 学正则表达式, 就是学正则表达式的规则, 你用不背, 网上一搜一大堆.                                          
+      2. 关于正则我对大家的要求是, 能用我们讲的规则, 看懂别人写的式子, 且会简单修改即可.                             
+      3. 正则不独属于Python, 像Java, JavaScript, PHP, Go等都支持.                                                           
+- python步骤:    
+    1. 导包
+        ```python                                  
+        import re
+        ```
+    2. 正则匹配                               
+        ```python            
+        # 从前往后依次匹配,只要能匹配即可.      
+        result = re.match('正则表达式', '要校验的字符串')       
+        # 分段查找.
+        result = re.search('正则表达式', '要校验的字符串')     
+        # 替换
+        result = re.compile('正则表达式').sub(替换后的内容, 要被替换的字符串)           
+        ```
+    3. 获取匹配结果.       
+        ```python            
+        result.group()
+        ```                       
+- 正则常用的规则:
+  ```python
+        .       代表任意的 1个字符, 除了 \n
+        \.      取消.的特殊含义, 就是1个普通的.
+        a       代表1个普通的字符 a
+        [abc]   代表a,b,c中任意的1个字符
+        [^abc]  代表除了a,b,c外, 任意的1个字符
+        [3-7]   代表[34567]
+        \d      代表数字, 等价于 [0-9]
+        \D      代表非数字, 等价于 [^0-9]
+        \s      空白，即 空格，tab键
+        \S      非空白
+        \w      非特殊字符，即a-z,A-Z,0-9,_,汉字 
+        \W      特殊字符，即非字母，非数字，非汉字
+
+        ^
+        $
+
+        *   任意数量词，至少0次，至多无所谓
+        .*  任意多个字符
+        ?
+        +
+        {n}
+        {n,}
+        {n,m}
+
+        |           代表 或者的意思
+        ()
+        \num
+
+        扩展:
+            (?P<分组名>)
+            (?P=分组名)
+
+  ```
+
+
+- **正则入门-案例**
+
+```python
+"""
+10案例: 演示正则表达式之 校验单个字符.
+"""
+# 需求: 正则入门.
+
+# 1.导包
+import re
+
+# 2.正则校验, 参1: 正则规则, 参2: 要被校验的字符串
+# result = re.match('.it', 'ait')     # 匹配成功
+# result = re.match('.it', '你it')    # 匹配成功
+# result = re.match('.it', '你好it')   # 失败
+
+# result = re.match('\.it', '你it')   # 失败
+# result = re.match('\.it', '.it')   # 匹配成功
+
+result = re.match('[ahg]it', 'ait') # 匹配成功
+result = re.match('[ahg]it', 'hit') # 匹配成功
+result = re.match('[ahg]it', 'git') # 匹配成功
+result = re.match('[ahg]it', 'g it') # 失败
+
+
+result = re.match('[^ahg]it', 'ait')  # 失败
+result = re.match('[^ahg]it', 'x it') # 失败
+result = re.match('[^ahg]it', 'xit') # 匹配成功
+result = re.match('[^ahg]it', 'xitabcxyz') # 匹配成功, 从前往后匹配, 匹配到就返回.
+result = re.match('[^ahg]it', 'abcxitabcxyz') # 失败, 从前往后依次查找.
+# result = re.search('[^ahg]it', 'abcxitabcxyz') # 成功，分段查找，返回 xit .
+
+
+result = re.match('[3-7]it', '3it') # 匹配成功
+result = re.match('[3-7]it', '-it') # 失败, [3-7]等价于[34567]
+
+
+# 3.获取匹配结果.
+if result:
+    print(result.group())
+else:
+    print('匹配失败')
+```
+
+### 4.4.2 正则替换
+```python
+# 替换
+result = re.compile('正则表达式').sub(替换后的内容, 要被替换的字符串)    
+# re.compile()  # 接收一个正则，返回正则对象
+# 新版替换 参1：正则规则 参2： 要换成的新字符串 参3：要被替换的字符串
+result = re.sub(pattern, repl, string, count, flags)
+```
+
+```python
+"""
+11案例: 演示正则替换.
+"""
+# 导包
+import re
+
+# 1.定义字符串.
+s = '开心你就大声笑,哈哈,呵呵,嘿嘿,嘻嘻,桀桀桀,啦啦啦夯'
+
+# 2.把上述的 哈,呵,嘿,嘻,桀 替换为 ♥ 
+#                     正则规则            新字符串   要被替换的字符串
+result = re.compile('哈|呵|嘿|嘻|桀').sub('♥', s)
+
+# 3.打印结果.
+print(result)
+print('-' * 23)
+
+# 新版API(函数)的写法.
+# 参1: 正则规则,  参2: 新字符串,  参3: 要被替换的字符串
+result = re.sub('哈|呵|嘿|嘻|桀', '♣①', s)
+print(result)   # 开心你就大声笑,♣①♣①,♣①♣①,♣①♣①,♣①♣①,♣①♣①♣①,啦啦啦夯
+```
+
+
+
+## 正则表达式_校验单个字符
+
+```python
+"""
+案例: 演示正则表达式之 校验单个字符.
+"""
+
+# 需求: 正则入门.
+
+# 1.导包
+import re
+
+# 2.正则校验, 参1: 正则规则, 参2: 要被校验的字符串
+# result = re.match('.it', 'ait')     # 匹配成功
+# result = re.match('.it', '你it')    # 匹配成功
+# result = re.match('.it', '你好it')   # 失败
+
+# result = re.match('\.it', '你it')   # 失败
+# result = re.match('\.it', '.it')   # 匹配成功
+
+result = re.match('[ahg]it', 'ait') # 匹配成功
+result = re.match('[ahg]it', 'hit') # 匹配成功
+result = re.match('[ahg]it', 'git') # 匹配成功
+result = re.match('[ahg]it', 'g it') # 失败
+
+
+result = re.match('[^ahg]it', 'ait')  # 失败
+result = re.match('[^ahg]it', 'x it') # 失败
+result = re.match('[^ahg]it', 'xit') # 匹配成功
+result = re.match('[^ahg]it', 'xitabcxyz') # 匹配成功, 从前往后匹配, 匹配到就返回.
+result = re.match('[^ahg]it', 'abcxitabcxyz') # 失败, 从前往后依次查找.
+# result = re.search('[^ahg]it', 'abcxitabcxyz') # 失败, 从前往后依次查找.
+
+
+result = re.match('[3-7]it', '3it') # 匹配成功
+result = re.match('[3-7]it', '-it') # 失败, [3-7]等价于[34567]
+
+
+result = re.match('a\\dhm', 'a1hm')   # 匹配成功
+result = re.match('a\\dhm', 'a10hm')  # 失败
+
+result = re.match('a\\Dhm', 'a!hm')  # 匹配成功
+result = re.match('a\\Dhm', 'abhm')  # 匹配成功
+
+
+result = re.match('a\\shm', 'abhm')  # 失败
+result = re.match('a\\shm', 'a\thm')  # 匹配成功
+result = re.match('a\\shm', 'a\nhm')  # 匹配成功
+result = re.match('a\\shm', 'a hm')  # 匹配成功
+
+result = re.match('a\\whm', 'a\thm')  # 失败
+result = re.match('a\\whm', 'a!hm')  # 失败
+result = re.match('a\\whm', 'axhm')  # 匹配成功
+result = re.match('a\\whm', 'a_hm')  # 匹配成功
+result = re.match('a\\whm', 'a6hm')  # 匹配成功
+result = re.match('a\\whm', 'aYhm')  # 匹配成功
+result = re.match('a\\whm', 'a夯hm') # 匹配成功
+
+# 3.获取匹配结果.
+if result:
+    print(result.group())
+else:
+    print('匹配失败')
+
+```
+
+## 正则表达式_校验多个字符
+
+```python
+"""
+案例: 演示正则表达式之 校验单个字符.
+
+正则表达式介绍:
+    概述:
+        正确的, 符合特定规则的 字符串.
+        Regular Expression, 正则表达式, 简称: re
+    细节:
+        1. 学正则表达式, 就是学正则表达式的规则, 你用不背, 网上一搜一大堆.
+        2. 关于正则我对大家的要求是, 能用我们讲的规则, 看懂别人写的式子, 且会简单修改即可.
+        3. 正则不独属于Python, 像Java, JavaScript, PHP, Go等都支持.
+    步骤:
+        1. 导包
+            import re
+        2. 正则匹配
+            result = re.match('正则表达式', '要校验的字符串')       从前往后依次匹配,只要能匹配即可.
+            result = re.search('正则表达式', '要校验的字符串')      分段查找.
+        3. 获取匹配结果.
+            result.group()
+    正则常用的规则:9
+        .       代表任意的 1个字符, 除了 \n
+        \.      取消.的特殊含义, 就是1个普通的.
+        a       代表1个普通的字符 a
+        [abc]   代表a,b,c中任意的1个字符
+        [^abc]  代表除了a,b,c外, 任意的1个字符
+        \d      代表数字, 等价于 [0-9]
+        \D      代表非数字, 等价于 [^0-9]
+        \s      代表空白字符, 等价于 [\t\n\r]
+        \S      代表非空白字符
+        \w      代表非特殊字符, 即: 数字, 字母, 下划线, 汉字, [a-zA-Z0-9_汉字]
+        \W      代表特殊字符, 非字母,数字,下划线,汉字
+
+        ^
+        $
+
+        *       代表前边的内容 出现至少0次, 至多无数次
+        ?       代表前边的内容 出现至少0次, 至多1次
+        +       代表前边的内容 出现至少1次, 至多无数次
+        {n}     代表前边的内容 恰好出现n次, 多一次,少一次都不行
+        {n,}    代表前边的内容 至少出现n次, 至多无数次
+        {n,m}   代表前边的内容 至少出现n次, 至多出现m次, 包左包右.
+
+        |           代表 或者的意思
+        ()
+        \num
+
+        扩展:
+            (?P<分组名>)
+            (?P=分组名)
+"""
+
+
+
+# 导包
+import re
+
+# 验证 *       代表前边的内容 出现至少0次, 至多无数次
+result = re.match('.*hm.*', 'abchm123')     # 匹配成功
+result = re.match('.*hm.*', 'hm123')        # 匹配成功
+result = re.match('.*hm.*', 'abchm')        # 匹配成功
+
+result = re.match('.+hm.*', 'abchm')        # 匹配成功
+result = re.match('.+hm.*', 'hm123')        # 失败
+
+result = re.match('.?hm.*', 'ahm123')       # 匹配成功
+result = re.match('.?hm.*', 'hm123')        # 匹配成功
+result = re.match('.?hm.*', 'abchm123')     # 失败
+
+
+result = re.match(r'\d{3}hm\w{2,5}', '123hm123')     # 匹配成功
+result = re.match(r'\d{3}hm\w{2,5}', '123hm12@')     # 匹配成功
+result = re.match(r'\d{3}hm\w{2,5}', '123hmabcAB')   # 匹配成功
+result = re.match(r'\d{3}hm\w{2,5}', '1234hm123')    # 失败
+result = re.match(r'\d{3}hm\w{2,5}', '12hm123')      # 失败
+result = re.match(r'\d{3}hm\w{2,5}', '123hm1@')      # 失败
+result = re.match(r'\d{3}hm\w{2,5}', '123hmabcAB1')  # 失败
+
+
+result = re.match(r'\d{3,}hm\w{2,5}', '12hmabcAB1')   # 失败
+result = re.match(r'\d{3,}hm\w{2, 5}', '123hmabcAB1') # 失败, 注意空格
+result = re.match(r'\d{3,}hm\w{2,5}', '123hmabc') # 匹配成功
+
+
+
+
+# 验证 ?       代表前边的内容 出现至少0次, 至多1次
+# 验证 +       代表前边的内容 出现至少1次, 至多无数次
+# 验证 {n}     代表前边的内容 恰好出现n次, 多一次,少一次都不行
+# 验证 {n,}    代表前边的内容 至少出现n次, 至多无数次
+# 验证 {n,m}   代表前边的内容 至少出现n次, 至多出现m次, 包左包右.
+
+# 查看结果.
+print(result.group() if result else '未匹配')
+```
+
+## 正则表达式_校验开头和结尾
+
+```python
+r"""
+案例: 演示正则表达式之 校验单个字符.
+
+正则表达式介绍:
+    概述:
+        正确的, 符合特定规则的 字符串.
+        Regular Expression, 正则表达式, 简称: re
+    细节:
+        1. 学正则表达式, 就是学正则表达式的规则, 你用不背, 网上一搜一大堆.
+        2. 关于正则我对大家的要求是, 能用我们讲的规则, 看懂别人写的式子, 且会简单修改即可.
+        3. 正则不独属于Python, 像Java, JavaScript, PHP, Go等都支持.
+    步骤:
+        1. 导包
+            import re
+        2. 正则匹配
+            result = re.match('正则表达式', '要校验的字符串')       从前往后依次匹配,只要能匹配即可.
+            result = re.search('正则表达式', '要校验的字符串')      分段查找.
+        3. 获取匹配结果.
+            result.group()
+    正则常用的规则:9
+        .       代表任意的 1个字符, 除了 \n
+        \.      取消.的特殊含义, 就是1个普通的.
+        a       代表1个普通的字符 a
+        [abc]   代表a,b,c中任意的1个字符
+        [^abc]  代表除了a,b,c外, 任意的1个字符
+        \d      代表数字, 等价于 [0-9]
+        \D      代表非数字, 等价于 [^0-9]
+        \s      代表空白字符, 等价于 [\t\n\r]
+        \S      代表非空白字符
+        \w      代表非特殊字符, 即: 数字, 字母, 下划线, 汉字, [a-zA-Z0-9_汉字]
+        \W      代表特殊字符, 非字母,数字,下划线,汉字
+
+        ^       表示开头
+        $       表示结尾
+
+        *       代表前边的内容 出现至少0次, 至多无数次
+        ?       代表前边的内容 出现至少0次, 至多1次
+        +       代表前边的内容 出现至少1次, 至多无数次
+        {n}     代表前边的内容 恰好出现n次, 多一次,少一次都不行
+        {n,}    代表前边的内容 至少出现n次, 至多无数次
+        {n,m}   代表前边的内容 至少出现n次, 至多出现m次, 包左包右.
+
+        |           代表 或者的意思
+        ()
+        \num
+
+        扩展:
+            (?P<分组名>)
+            (?P=分组名)
+"""
+
+
+
+# 导包
+import re
+
+
+# 正则匹配
+# 需求1: 校验字符串必须以数字开头, 无论match(), 还是search()均是.  后边是啥无所谓.
+# result = re.match(r'\d+.*', 'abc123xyz')        # 失败
+# result = re.search(r'\d+.*', 'abc123xyz')       # 匹配成功
+#
+# result = re.match(r'^\d+.*', 'abc123xyz')        # 失败
+# result = re.search(r'^\d+.*', 'abc123xyz')       # 失败
+
+
+# 需求2: 校验字符串必须以数字开头, 以任意的3个字母结尾.
+# result = re.search(r'^\d+.*[a-zA-Z]{3}', 'abc123xyz12')       # 失败
+# result = re.search(r'^\d+.*[a-zA-Z]{3}', '123你好xyz12')       # 匹配成功
+# result = re.search(r'^\d+.*[a-zA-Z]{3}$', '123你好abc12')      # 失败
+# result = re.search(r'^\d+.*[a-zA-Z]{3}$', '123你好abc')        # 匹配成功
+
+
+# 需求3: 校验手机号.  规则: 1.长度必须是11位   2.必须是纯数字.  3.第1位数字必须是1.   4.第2位数字可以是 3-9
+result = re.match(r'^1[3-9]\d{9}$', '13112345678a')
+result = re.match(r'^1[3-9]\d{9}$', '12112345678')
+
+result = re.match(r'^1[3-9]\d{9}$', '13112345678')
+
+# 打印匹配结果.
+print(result.group() if result else '未匹配!')
+```
+
+## 正则表达式_校验分组
+
+```python
+r"""
+案例: 演示正则表达式之 校验分组.
+
+正则表达式介绍:
+    概述:
+        正确的, 符合特定规则的 字符串.
+        Regular Expression, 正则表达式, 简称: re
+    细节:
+        1. 学正则表达式, 就是学正则表达式的规则, 你用不背, 网上一搜一大堆.
+        2. 关于正则我对大家的要求是, 能用我们讲的规则, 看懂别人写的式子, 且会简单修改即可.
+        3. 正则不独属于Python, 像Java, JavaScript, PHP, Go等都支持.
+    步骤:
+        1. 导包
+            import re
+        2. 正则匹配
+            result = re.match('正则表达式', '要校验的字符串')       从前往后依次匹配,只要能匹配即可.
+            result = re.search('正则表达式', '要校验的字符串')      分段查找.
+        3. 获取匹配结果.
+            result.group()
+    正则常用的规则:9
+        .       代表任意的 1个字符, 除了 \n
+        \.      取消.的特殊含义, 就是1个普通的.
+        a       代表1个普通的字符 a
+        [abc]   代表a,b,c中任意的1个字符
+        [^abc]  代表除了a,b,c外, 任意的1个字符
+        \d      代表数字, 等价于 [0-9]
+        \D      代表非数字, 等价于 [^0-9]
+        \s      代表空白字符, 等价于 [\t\n\r]
+        \S      代表非空白字符
+        \w      代表非特殊字符, 即: 数字, 字母, 下划线, 汉字, [a-zA-Z0-9_汉字]
+        \W      代表特殊字符, 非字母,数字,下划线,汉字
+
+        ^       表示开头
+        $       表示结尾
+
+        *       代表前边的内容 出现至少0次, 至多无数次
+        ?       代表前边的内容 出现至少0次, 至多1次
+        +       代表前边的内容 出现至少1次, 至多无数次
+        {n}     代表前边的内容 恰好出现n次, 多一次,少一次都不行
+        {n,}    代表前边的内容 至少出现n次, 至多无数次
+        {n,m}   代表前边的内容 至少出现n次, 至多出现m次, 包左包右.
+
+        |           代表 或者的意思
+        ()          代表 分组, 从左往右数, 第几个左小括号(, 就表示第几组
+        \num        代表 引用第几组的内容.
+
+        扩展:
+            (?P<分组名>)   设置分组
+            (?P=分组名)    使用分组
+"""
+# 导包
+import re
+
+# 需求: 在列表 fruits = ['apple', 'banana', 'orange', 'pear'], 匹配 apple, pear
+# 1.定义水果列表
+fruits = ['apple', 'banana', 'orange', 'pear']
+
+# 2. 遍历, 获取到每种水果.
+for fruit in fruits:
+    # 3. 判断当前水果是否是 喜欢吃的水果.
+    # 参1: 正则表达式, 参2: 要校验的字符串.
+    if re.match('apple|pear', fruit):
+        # 4. 走这里, 说明是喜欢吃的.
+        print(f'喜欢吃: {fruit}')
+    else:
+        # 5. 走这里, 说明不是喜欢吃的.
+        print(f'不喜欢吃: {fruit}')
+
+```
+
+## 正则表达式_校验邮箱
+
+```python
+r"""
+案例: 演示正则表达式之 校验邮箱.
+
+正则规则:
+    |           代表 或者的意思
+    ()          代表 分组, 从左往右数, 第几个左小括号(, 就表示第几组
+    \num        代表 引用第几组的内容.
+
+    扩展:
+        (?P<分组名>)   设置分组
+        (?P=分组名)    使用分组
+"""
+# 导包
+import re
+
+
+# 1. 定义邮箱.
+email = "abcd@163.com"
+
+# 2. 校验邮箱是否合法.
+result = re.match(r'^[a-zA-Z_0-9]{4,20}@(163|126|qq)\.com$', email)
+
+# 3. 打印结果.
+if result:
+    print(f'合法邮箱为: {result.group()}')
+    print(f'合法邮箱为: {result.group(0)}')  # 获取第0组的信息, 效果同上, 即: 整个匹配到的结果.
+    print(f'合法邮箱为: {result.group(1)}')  # 获取第1组的信息,  即: 163
+else:
+    print("邮箱不合法!")
+```
+
+## 正则表达式_提取QQ号
+
+```python
+r"""
+案例: 演示正则表达式之 校验邮箱.
+
+正则规则:
+    |           代表 或者的意思
+    ()          代表 分组, 从左往右数, 第几个左小括号(, 就表示第几组
+    \num        代表 引用第几组的内容.
+
+    扩展:
+        (?P<分组名>)   设置分组
+        (?P=分组名)    使用分组
+"""
+import re
+
+# 需求: 数据格式为 qq:数字,  从中提qq文本 和 qq号
+
+# 1.定义变量, 记录要校验的字符串.
+s = 'qq:123456'
+
+
+# 2.正则校验.
+result = re.match(r'^(qq):(\d{6,11})$', s)
+
+# 3.提取内容.
+if result:
+    print(result.group())
+    print(result.group(0))  # 效果同上.
+    print('-' * 23)
+
+    print(result.group(1))
+    print(result.group(2))
+else:
+    print('未匹配')
+```
+
+## 正则表达式_校验html
+
+```python
+r"""
+案例: 演示正则表达式之 校验邮箱.
+
+正则规则:
+    |           代表 或者的意思
+    ()          代表 分组, 从左往右数, 第几个左小括号(, 就表示第几组
+    \num        代表 引用第几组的内容.
+
+    扩展:
+        (?P<分组名>)   设置分组
+        (?P=分组名)    使用分组
+
+
+参考的html代码:
+    <html>
+        <head></head>       # 开始, 开放标签,    结束, 闭合标签.
+        <body></body>
+        <br />              # 自闭合标签.
+    </html>
+"""
+import re
+
+
+# 需求1: 校验html的单级标签.
+# 1.定义变量, 记录: html标签.
+# html_s = '<html>我是html页面</html>'        # 字母数: 1 ~ 4
+
+# 2.匹配校验.
+# 写法1: 重新copy一份.
+# result = re.match('<[a-zA-Z]{1,4}>.*</[a-zA-Z]{1,4}>', html_s)
+
+# 写法2: 引入分组的概念.
+# result = re.match(r'<([a-zA-Z]{1,4})>.*</\1>', html_s)
+
+# 3.打印结果.
+# if result:
+#     print(result.group())
+# else:
+#     print('未匹配!')
+
+
+# 需求2: 校验html的单级标签.
+# 1.定义变量, 记录: html标签.
+html_s = '<html><h1>我是html页面</h1></html>'   # 字母数: 1 ~ 4,  标题标签1 ~ 6
+
+# 2.匹配校验.
+# 写法1: 重新copy一份.
+# result = re.match(r'<[a-zA-Z]{1,4}><h[1-6]>.*</h[1-6]></[a-zA-Z]{1,4}>', html_s)
+
+# 写法2: 引入分组的概念.
+# result = re.match(r'<([a-zA-Z]{1,4})><(h[1-6])>.*</\2></\1>', html_s)
+
+# 写法3: 给分组起名.
+result = re.match(r'<(?P<A>[a-zA-Z]{1,4})><(?P<B>h[1-6])>.*</(?P=B)></(?P=A)>', html_s)
+
+# 3.打印结果.
+if result:
+    print(result.group())
+else:
+    print('未匹配!')
+```
 
