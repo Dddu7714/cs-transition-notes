@@ -1,0 +1,1216 @@
+# Transformer 面试问题整理
+
+## 1. Transformer 为何使用多头注意力机制？为什么不使用一个头？
+
+核心原因：**一个注意力头只能在一个表示空间中计算注意力，多头注意力可以让模型从多个子空间、多个角度关注信息。**
+
+单头注意力做的是：
+
+$$
+\text{Attention}(Q,K,V)
+$$
+
+它会把所有信息混合成一次加权平均。如果一句话里同时存在主谓关系、指代关系、局部关系、长距离依赖等，一个 head 很难同时学好这些关系。
+
+多头注意力做的是：
+
+$$
+\text{MultiHead}(Q,K,V)
+=
+\text{Concat}(\text{head}_1,\dots,\text{head}_h)W^O
+$$
+
+其中：
+
+$$
+\text{head}_i
+=
+\text{Attention}(QW_i^Q,KW_i^K,VW_i^V)
+$$
+
+每个 head 有自己独立的投影矩阵，所以每个 head 可以学习不同的注意力模式。
+
+通俗理解：
+
+> 单头注意力是一双眼睛看句子；  
+> 多头注意力是多双眼睛同时看句子，每双眼睛关注不同关系。
+
+例如：
+
+- 一个 head 关注主语；
+- 一个 head 关注宾语；
+- 一个 head 关注代词指代；
+- 一个 head 关注相邻词；
+- 一个 head 关注长距离依赖。
+
+因此，多头注意力提升的是模型的**表达能力**，而不是单纯为了增加参数量。
+
+---
+
+## 2. Transformer 为什么 Q 和 K 使用不同的权重矩阵生成？为什么不能使用同一个值进行自身点乘？
+
+这个问题和第一个问题不同。
+
+第一个问题问的是：
+
+> 为什么要多个 head？
+
+这个问题问的是：
+
+> 在一个 head 里面，为什么 Q 和 K 要不同？
+
+在注意力机制中：
+
+$$
+Q = XW^Q
+$$
+
+$$
+K = XW^K
+$$
+
+$$
+V = XW^V
+$$
+
+虽然它们都来自同一个输入 $X$，但它们的角色不同。
+
+| 向量 | 作用 |
+|---|---|
+| Q | 我想找什么信息 |
+| K | 我有什么特征，可以被别人匹配 |
+| V | 我被关注后提供什么内容 |
+
+如果让 Q 和 K 使用同一个矩阵，甚至直接用 $X$ 和 $X$ 自己点乘，那么模型的表达能力会下降。
+
+因为此时模型只能学：
+
+$$
+XX^T
+$$
+
+这相当于用同一种表示同时承担“查询”和“被查询”的角色。
+
+但现实中，一个词在不同角色下的表示应该不同。
+
+例如句子：
+
+```text
+The animal didn’t cross the street because it was tired.
+```
+
+处理 `it` 时：
+
+- `it` 的 Query：我想找一个可能被指代的对象；
+- `animal` 的 Key：我是一个可能被指代的实体；
+- `animal` 的 Value：我能提供“动物”这个语义信息。
+
+Query 和 Key 的任务不一样，所以使用不同矩阵更合理。
+
+一句话总结：
+
+> Q 和 K 使用不同权重矩阵，是为了让模型分别学习“我要找什么”和“我能不能被匹配”的不同表示空间，而不是被迫用同一种表示做所有事情。
+
+---
+
+## 3. Transformer 计算 attention 的时候为何选择点乘而不是加法？两者计算复杂度和效果上有什么区别？
+
+注意力主要有两种经典形式：加法注意力和点乘注意力。
+
+### 3.1 加法注意力 Additive Attention
+
+常见形式类似：
+
+$$
+\text{score}(q,k)
+=
+v^T \tanh(W_q q + W_k k)
+$$
+
+它会把 $q$ 和 $k$ 经过一个小型前馈神经网络计算匹配分数。
+
+优点：
+
+- 表达能力较强；
+- 在维度较小时效果不错。
+
+缺点：
+
+- 计算不容易完全矩阵化；
+- 速度相对较慢。
+
+---
+
+### 3.2 点乘注意力 Dot-Product Attention
+
+Transformer 使用的是点乘注意力：
+
+$$
+\text{score}(q,k)=qk^T
+$$
+
+矩阵形式为：
+
+$$
+QK^T
+$$
+
+优点：
+
+- 可以直接用矩阵乘法；
+- 可以一次性算出所有 token 两两之间的 attention score；
+- GPU 对矩阵乘法优化非常好；
+- 更快、更适合大规模并行计算。
+
+---
+
+### 3.3 复杂度和效果区别
+
+从理论复杂度看，两者都要计算 query 和 key 的两两关系，复杂度大致都是：
+
+$$
+O(n^2d)
+$$
+
+其中：
+
+- $n$ 是序列长度；
+- $d$ 是向量维度。
+
+但实际运行中：
+
+- 点乘 attention 可以写成大矩阵乘法 $QK^T$，GPU 很擅长；
+- 加法 attention 需要额外的非线性网络，矩阵化程度较差。
+
+效果上：
+
+- 小维度时，加法 attention 可能表现不错；
+- 大维度时，普通点乘容易数值过大，导致 softmax 饱和；
+- Transformer 使用 scaled dot-product attention 缓解了这个问题。
+
+因此 Transformer 选择点乘，是因为：
+
+> 点乘 attention 效果接近加法 attention，但计算速度和并行效率更好。
+
+---
+
+## 4. 为什么在进行 softmax 之前需要对 attention 进行 scaled？为什么除以 $\sqrt{d_k}$？
+
+Transformer 的 attention 公式是：
+
+$$
+\text{Attention}(Q,K,V)
+=
+\text{softmax}
+\left(
+\frac{QK^T}{\sqrt{d_k}}
+\right)V
+$$
+
+关键问题是：
+
+> 为什么要除以 $\sqrt{d_k}$？
+
+---
+
+### 4.1 点乘值会随着维度变大而变大
+
+假设 $q$ 和 $k$ 的每个分量都是独立随机变量，并且：
+
+$$
+E(q_i)=0,\quad Var(q_i)=1
+$$
+
+$$
+E(k_i)=0,\quad Var(k_i)=1
+$$
+
+点乘为：
+
+$$
+q \cdot k = \sum_{i=1}^{d_k} q_i k_i
+$$
+
+因为 $q_i$ 和 $k_i$ 独立，所以：
+
+$$
+E(q_i k_i)=E(q_i)E(k_i)=0
+$$
+
+并且：
+
+$$
+Var(q_i k_i)=Var(q_i)Var(k_i)=1
+$$
+
+所以：
+
+$$
+Var(q \cdot k)
+=
+Var\left(\sum_{i=1}^{d_k}q_i k_i\right)
+=
+d_k
+$$
+
+也就是说：
+
+$$
+q \cdot k
+$$
+
+的方差会随着 $d_k$ 增大而增大。
+
+标准差是：
+
+$$
+\sqrt{d_k}
+$$
+
+---
+
+### 4.2 不除以 $\sqrt{d_k}$ 会发生什么？
+
+如果 $d_k$ 很大，点乘分数会变得很大。
+
+softmax 对大数很敏感。
+
+例如：
+
+$$
+\text{softmax}([1,2,3])
+$$
+
+还比较平滑。
+
+但是：
+
+$$
+\text{softmax}([10,20,30])
+$$
+
+会非常接近 one-hot，最大的那个位置概率接近 1，其他位置接近 0。
+
+这样会导致：
+
+- 注意力分布过于尖锐；
+- 梯度变小；
+- 训练不稳定。
+
+---
+
+### 4.3 除以 $\sqrt{d_k}$ 的意义
+
+因为点乘结果的标准差大约是：
+
+$$
+\sqrt{d_k}
+$$
+
+所以除以它之后：
+
+$$
+\frac{q \cdot k}{\sqrt{d_k}}
+$$
+
+方差大约回到 1。
+
+这样 softmax 的输入不会太大，概率分布不会过早变得极端，训练更稳定。
+
+一句话总结：
+
+> 除以 $\sqrt{d_k}$ 是为了防止点乘结果随维度增大而过大，避免 softmax 饱和和梯度变小。
+
+---
+
+## 5. 在计算 attention score 的时候如何对 padding 做 mask 操作？
+
+真实训练时，一个 batch 里的句子长度不同，需要 padding。
+
+例如：
+
+```text
+句子1: I love NLP
+句子2: I love machine learning very much
+```
+
+为了放进同一个 batch，短句需要补 `<pad>`：
+
+```text
+I love NLP <pad> <pad> <pad>
+```
+
+但是 `<pad>` 不是实际词，不能被 attention 关注。
+
+所以在计算 attention score 后，要对 padding 位置加一个非常大的负数。
+
+attention score 原本是：
+
+$$
+S = \frac{QK^T}{\sqrt{d_k}}
+$$
+
+如果某些位置是 padding，就把这些位置变成：
+
+$$
+-\infty
+$$
+
+然后再做 softmax：
+
+$$
+\text{softmax}(S_{\text{masked}})
+$$
+
+因为：
+
+$$
+e^{-\infty} \approx 0
+$$
+
+所以 padding 位置的注意力权重会变成 0。
+
+实现上常用：
+
+```python
+scores = scores.masked_fill(pad_mask == 0, -1e9)
+attn = torch.softmax(scores, dim=-1)
+```
+
+注意：mask 一般是加在 **Key 的位置** 上，也就是不让真实 token 去关注 padding token。
+
+---
+
+## 6. 为什么在进行多头注意力的时候需要对每个 head 进行降维？
+
+如果不降维，每个 head 都使用完整的 $d_{\text{model}}$ 维度，那么计算量会变成 $h$ 倍。
+
+假设：
+
+$$
+d_{\text{model}} = 512
+$$
+
+$$
+h = 8
+$$
+
+如果每个 head 都用 512 维，那么总计算量大约是：
+
+$$
+8 \times 512
+$$
+
+计算量过大。
+
+所以 Transformer 让每个 head 的维度变成：
+
+$$
+d_k = d_v = \frac{d_{\text{model}}}{h}
+$$
+
+原论文中：
+
+$$
+d_k=d_v=\frac{512}{8}=64
+$$
+
+这样 8 个 head 拼接后仍然是：
+
+$$
+8 \times 64 = 512
+$$
+
+所以计算量和单头 512 维差不多，但表达能力更强。
+
+一句话总结：
+
+> 每个 head 降维，是为了在不显著增加计算量的情况下，获得多个注意力子空间。
+
+---
+
+## 7. 大概讲一下 Transformer 的 Encoder 模块
+
+Transformer Encoder 由 $N$ 个相同的 Encoder Layer 堆叠而成。
+
+原论文中：
+
+$$
+N=6
+$$
+
+每个 Encoder Layer 包含两个子层：
+
+```text
+Multi-Head Self-Attention
+Feed Forward Network
+```
+
+每个子层外面都有：
+
+```text
+Residual Connection + LayerNorm
+```
+
+整体流程是：
+
+```text
+输入 token
+↓
+Input Embedding
+↓
+加 Positional Encoding
+↓
+Multi-Head Self-Attention
+↓
+Add & Norm
+↓
+Feed Forward
+↓
+Add & Norm
+↓
+输出到下一层 Encoder
+```
+
+Self-Attention 中：
+
+$$
+Q=K=V=X
+$$
+
+更准确地说：
+
+$$
+Q=XW^Q,\quad K=XW^K,\quad V=XW^V
+$$
+
+Encoder 的作用是：
+
+> 让输入句子中的每个 token 融合整句话的上下文信息，得到上下文表示。
+
+例如输入：
+
+```text
+I love machine learning.
+```
+
+Encoder 输出的是每个 token 的上下文向量，而不是一个单独向量。
+
+---
+
+## 8. 为何在获取输入词向量之后需要对矩阵乘以 embedding size 的开方？
+
+原 Transformer 论文中，在 embedding 层后会乘：
+
+$$
+\sqrt{d_{\text{model}}}
+$$
+
+即：
+
+$$
+X = \text{Embedding}(x) \times \sqrt{d_{\text{model}}}
+$$
+
+然后再加位置编码：
+
+$$
+X = \text{Embedding}(x)\sqrt{d_{\text{model}}} + PE
+$$
+
+这么做主要是为了调整 embedding 的尺度。
+
+原因是：
+
+位置编码的数值通常在 $[-1,1]$ 附近。如果 embedding 初始化后数值较小，直接相加时，位置编码可能相对过强，词本身的语义信息会被位置编码影响太大。
+
+乘以：
+
+$$
+\sqrt{d_{\text{model}}}
+$$
+
+可以让词向量的尺度更合适，使 token embedding 和 positional encoding 在数值尺度上更加平衡。
+
+需要注意：
+
+> 这不是 Transformer 必须不可缺少的理论核心，而是原论文实现中的一个尺度处理技巧。很多现代实现会根据初始化方式、归一化方式有所调整。
+
+---
+
+## 9. 简单介绍 Transformer 的位置编码：有什么意义和优缺点？
+
+Self-Attention 本身没有顺序感。
+
+如果没有位置编码，模型看：
+
+```text
+我 喜欢 你
+```
+
+和：
+
+```text
+你 喜欢 我
+```
+
+可能难以区分顺序差异。
+
+所以 Transformer 需要加入位置编码。
+
+原论文使用的是正弦余弦位置编码：
+
+$$
+PE(pos,2i)=\sin\left(\frac{pos}{10000^{2i/d_{\text{model}}}}\right)
+$$
+
+$$
+PE(pos,2i+1)=\cos\left(\frac{pos}{10000^{2i/d_{\text{model}}}}\right)
+$$
+
+其中：
+
+- $pos$：token 的位置；
+- $i$：向量维度索引；
+- 偶数维用 sin；
+- 奇数维用 cos。
+
+优点：
+
+1. 不需要学习参数；
+2. 可以推广到比训练时更长的位置；
+3. 不同位置有不同编码；
+4. 通过三角函数关系，模型可以学习相对位置信息。
+
+缺点：
+
+1. 位置表达是固定的，不一定最适合具体任务；
+2. 对特别长文本的建模能力有限；
+3. 不如后来的一些相对位置编码、旋转位置编码灵活。
+
+---
+
+## 10. 你还了解哪些关于位置编码的技术？各自的优缺点是什么？
+
+常见位置编码包括：
+
+### 10.1 绝对位置编码 Absolute Position Embedding
+
+代表：
+
+- 原始 Transformer 的 sinusoidal positional encoding；
+- BERT 的 learned position embedding。
+
+做法：
+
+> 给每个位置一个位置向量，加到 token embedding 上。
+
+优点：
+
+- 简单；
+- 实现方便；
+- 对短文本效果好。
+
+缺点：
+
+- 对相对距离建模不够直接；
+- 学习式绝对位置编码不容易外推到训练长度以外。
+
+---
+
+### 10.2 可学习位置编码 Learned Position Embedding
+
+BERT、GPT 早期模型常用。
+
+优点：
+
+- 模型可以自己学位置表示；
+- 在固定最大长度内效果好。
+
+缺点：
+
+- 最大长度固定；
+- 超过训练长度时泛化差。
+
+---
+
+### 10.3 相对位置编码 Relative Position Encoding
+
+核心思想：
+
+> 不只告诉模型每个词在第几个位置，而是告诉模型两个词之间相隔多远。
+
+例如：
+
+```text
+token i 和 token j 的距离是 i-j
+```
+
+优点：
+
+- 更适合语言，因为语言关系往往和相对距离有关；
+- 对长文本泛化通常更好。
+
+缺点：
+
+- 实现比绝对位置编码复杂；
+- 计算和存储成本可能更高。
+
+---
+
+### 10.4 RoPE：Rotary Position Embedding
+
+现在很多大模型使用 RoPE，例如 LLaMA 系列。
+
+核心思想：
+
+> 用旋转的方式把位置信息编码进 Q 和 K，使 attention 分数自然包含相对位置信息。
+
+优点：
+
+- 很适合自回归语言模型；
+- 能较好表达相对位置；
+- 在长上下文扩展中表现较好；
+- 现代 LLM 常用。
+
+缺点：
+
+- 理解和实现比普通位置编码复杂；
+- 长度外推仍然需要一些技巧，例如 NTK scaling、YaRN 等。
+
+---
+
+### 10.5 ALiBi
+
+ALiBi 不直接加位置向量，而是在 attention score 上加一个和距离相关的偏置。
+
+优点：
+
+- 简单；
+- 外推能力较好；
+- 对长文本友好。
+
+缺点：
+
+- 表达能力可能不如一些复杂位置编码；
+- 对不同任务不一定总是最优。
+
+---
+
+## 11. 简单讲一下 Transformer 中的残差结构以及意义
+
+Transformer 中每个子层外都有残差连接。
+
+形式是：
+
+$$
+\text{LayerNorm}(x+\text{Sublayer}(x))
+$$
+
+例如 attention 子层：
+
+$$
+x_1 = \text{LayerNorm}(x+\text{MultiHeadAttention}(x))
+$$
+
+FFN 子层：
+
+$$
+x_2 = \text{LayerNorm}(x_1+\text{FFN}(x_1))
+$$
+
+残差连接的作用：
+
+1. 保留原始输入信息；
+2. 缓解梯度消失；
+3. 让深层网络更容易训练；
+4. 如果某层暂时学不好，模型至少可以通过残差保留原信息。
+
+通俗理解：
+
+> 每一层不是完全重写输入，而是在原来的基础上做修改。
+
+---
+
+## 12. 为什么 Transformer 块使用 LayerNorm 而不是 BatchNorm？LayerNorm 在 Transformer 的位置是哪里？
+
+### 12.1 为什么不用 BatchNorm？
+
+BatchNorm 是对 batch 维度做归一化，它依赖 batch 内样本统计量。
+
+但是 NLP 任务中：
+
+- 句子长度不同；
+- batch size 可能变化；
+- 自回归生成时，推理阶段可能一次生成一个 token；
+- 序列任务中不同位置的统计分布差异明显。
+
+如果用 BatchNorm，训练和推理的统计量可能不稳定。
+
+LayerNorm 是对每个 token 自己的 hidden dimension 做归一化，不依赖 batch 维度。
+
+因此更适合 Transformer。
+
+---
+
+### 12.2 LayerNorm 在 Transformer 的位置
+
+原始 Transformer 使用的是 Post-LN：
+
+$$
+\text{LayerNorm}(x+\text{Sublayer}(x))
+$$
+
+也就是：
+
+```text
+Sublayer
+↓
+Residual Add
+↓
+LayerNorm
+```
+
+现代很多大模型使用 Pre-LN：
+
+$$
+x+\text{Sublayer}(\text{LayerNorm}(x))
+$$
+
+也就是：
+
+```text
+LayerNorm
+↓
+Sublayer
+↓
+Residual Add
+```
+
+Pre-LN 的深层训练通常更稳定，所以现代 LLM 常用 Pre-LN 结构。
+
+---
+
+## 13. 简单讲一下 BatchNorm 技术，以及它的优缺点
+
+BatchNorm 是 Batch Normalization。
+
+它对一个 batch 中的激活值进行标准化：
+
+$$
+\hat{x}=\frac{x-\mu_B}{\sqrt{\sigma_B^2+\epsilon}}
+$$
+
+然后再做可学习的缩放和平移：
+
+$$
+y=\gamma \hat{x}+\beta
+$$
+
+其中：
+
+- $\mu_B$：batch 均值；
+- $\sigma_B^2$：batch 方差；
+- $\gamma,\beta$：可学习参数。
+
+优点：
+
+1. 缓解训练不稳定；
+2. 加快收敛；
+3. 对初始化不那么敏感；
+4. 有一定正则化效果。
+
+缺点：
+
+1. 依赖 batch size，小 batch 时效果不稳定；
+2. 训练和测试行为不同；
+3. 不太适合变长序列和自回归生成；
+4. 分布式训练时统计量处理复杂。
+
+训练时 BatchNorm 使用当前 batch 的均值和方差。
+
+测试时 BatchNorm 使用训练过程中累计的 running mean 和 running variance。
+
+---
+
+## 14. 简单描述 Transformer 中的前馈神经网络？使用了什么激活函数？相关优缺点？
+
+Transformer 中的 FFN 是 position-wise feed-forward network。
+
+意思是：
+
+> 对每个位置的 token 向量单独使用同一个前馈网络。
+
+原论文公式：
+
+$$
+\text{FFN}(x)=\max(0,xW_1+b_1)W_2+b_2
+$$
+
+也就是两层线性层，中间用 ReLU 激活函数。
+
+维度通常是：
+
+$$
+d_{\text{model}} \rightarrow d_{\text{ff}} \rightarrow d_{\text{model}}
+$$
+
+原论文中：
+
+$$
+512 \rightarrow 2048 \rightarrow 512
+$$
+
+作用：
+
+- Attention 负责不同 token 之间的信息交互；
+- FFN 负责对每个 token 的表示做非线性变换和特征提取。
+
+ReLU 优点：
+
+- 简单；
+- 计算快；
+- 缓解梯度消失。
+
+ReLU 缺点：
+
+- 可能出现 dead ReLU；
+- 表达能力不如后来的 GELU、SwiGLU。
+
+现代大模型中常用：
+
+- GELU；
+- SiLU；
+- SwiGLU；
+- GeGLU。
+
+例如 LLaMA 使用 SwiGLU 类结构，通常比普通 ReLU FFN 表达能力更强，但计算量也更大。
+
+---
+
+## 15. Encoder 端和 Decoder 端是如何进行交互的？
+
+Encoder 和 Decoder 通过 **Encoder-Decoder Attention** 交互，也叫 **Cross-Attention**。
+
+Encoder 先处理源句子，得到输出：
+
+$$
+H
+$$
+
+Decoder 在生成目标句子时，第二个 attention 层会使用：
+
+$$
+Q = \text{Decoder hidden states}
+$$
+
+$$
+K = \text{Encoder outputs}
+$$
+
+$$
+V = \text{Encoder outputs}
+$$
+
+也就是：
+
+$$
+\text{Attention}(Q_{\text{decoder}},K_{\text{encoder}},V_{\text{encoder}})
+$$
+
+通俗理解：
+
+> Decoder 在生成每个词时，会拿自己的 Query 去问 Encoder：  
+> 我现在要生成这个目标词，应该关注源句子的哪些部分？
+
+例如翻译：
+
+```text
+I love machine learning.
+```
+
+Decoder 生成“机器学习”时，会通过 cross-attention 重点关注英文里的：
+
+```text
+machine learning
+```
+
+这和传统 seq2seq attention 思想一致：
+
+> decoder 每一步动态查看 encoder 的 hidden states，而不是只依赖一个固定上下文向量。
+
+---
+
+## 16. Decoder 阶段的多头自注意力和 Encoder 的多头自注意力有什么区别？为什么 Decoder 自注意力需要 sequence mask？
+
+Encoder 的 self-attention：
+
+> 每个 token 可以看到输入序列中的所有 token。
+
+例如：
+
+```text
+I love machine learning
+```
+
+Encoder 处理 `love` 时，可以看前面的 `I`，也可以看后面的 `machine learning`。
+
+Decoder 的 self-attention：
+
+> 每个 token 只能看到当前位置及之前的 token，不能看到未来 token。
+
+例如目标序列：
+
+```text
+我 喜欢 机器 学习
+```
+
+当 Decoder 预测“机器”时，只能看到：
+
+```text
+<bos> 我 喜欢
+```
+
+不能提前看到：
+
+```text
+机器 学习
+```
+
+否则训练时就提前看到了答案，造成信息泄露。
+
+所以 Decoder 需要 causal mask，也叫 sequence mask、look-ahead mask。
+
+mask 矩阵大致是下三角形式：
+
+$$
+\begin{bmatrix}
+0 & -\infty & -\infty & -\infty \\
+0 & 0 & -\infty & -\infty \\
+0 & 0 & 0 & -\infty \\
+0 & 0 & 0 & 0
+\end{bmatrix}
+$$
+
+加到 attention score 上，再做 softmax。
+
+这样未来位置的概率就是 0。
+
+---
+
+## 17. Transformer 的并行化体现在哪个地方？Decoder 端可以做并行化吗？
+
+Transformer 的并行化主要体现在以下几个方面。
+
+### 17.1 训练时 Encoder 可以并行
+
+Encoder 的 self-attention 可以一次性计算所有 token 之间的关系：
+
+$$
+QK^T
+$$
+
+整个序列可以同时输入，不需要像 RNN 那样一个词一个词顺序处理。
+
+---
+
+### 17.2 训练时 Decoder 也可以并行
+
+训练阶段，目标序列已经给定。
+
+例如目标：
+
+```text
+我 喜欢 机器 学习
+```
+
+Decoder 输入是右移后的：
+
+```text
+<bos> 我 喜欢 机器
+```
+
+虽然 Decoder 不能看未来，但可以通过 mask 一次性计算所有位置。
+
+所以训练时 Decoder 是可以并行的。
+
+---
+
+### 17.3 推理时 Decoder 不能完全并行
+
+推理生成时，Decoder 需要一个 token 一个 token 生成：
+
+```text
+<bos>
+<bos> 我
+<bos> 我 喜欢
+<bos> 我 喜欢 机器
+```
+
+因为下一个 token 依赖前面已经生成的 token。
+
+所以推理阶段 Decoder 不能像训练那样完全并行。
+
+不过可以用 KV Cache 加速，把之前算过的 K、V 缓存起来，避免重复计算。
+
+一句话总结：
+
+> Transformer 训练时高度并行，Decoder 训练也可以并行；但自回归推理时，Decoder 必须逐 token 生成，不能完全并行。
+
+---
+
+## 19. Transformer 训练的时候学习率是如何设定的？Dropout 是如何设定的，位置在哪里？Dropout 在测试时需要注意什么？
+
+### 19.1 学习率设定
+
+原始 Transformer 使用 Adam 优化器，并设计了 warmup 学习率策略。
+
+学习率公式是：
+
+$$
+lr
+=
+d_{\text{model}}^{-0.5}
+\cdot
+\min
+\left(
+step^{-0.5},
+step \cdot warmup\_steps^{-1.5}
+\right)
+$$
+
+其中原论文使用：
+
+$$
+warmup\_steps=4000
+$$
+
+这个策略的含义是：
+
+- 训练初期学习率从小逐渐增大，叫 warmup；
+- 达到峰值后，学习率逐渐下降。
+
+为什么要 warmup？
+
+因为 Transformer 参数多，训练初期不稳定。如果一开始学习率太大，容易震荡甚至发散。
+
+---
+
+### 19.2 Dropout 设置在哪里？
+
+原论文中 dropout 大概设为：
+
+$$
+P_{drop}=0.1
+$$
+
+Dropout 主要用在：
+
+1. attention 权重上；
+2. FFN 中；
+3. residual connection 前；
+4. embedding + positional encoding 后。
+
+作用是防止过拟合。
+
+---
+
+### 19.3 Dropout 测试时注意什么？
+
+训练时 Dropout 会随机丢弃部分神经元，并对保留下来的值做缩放。
+
+在 PyTorch 中：
+
+```python
+model.train()
+```
+
+时 Dropout 生效。
+
+```python
+model.eval()
+```
+
+时 Dropout 关闭。
+
+测试时一定要调用：
+
+```python
+model.eval()
+```
+
+否则 Dropout 仍然随机丢弃，会导致输出不稳定。
+
+另外测试时通常配合：
+
+```python
+with torch.no_grad():
+```
+
+防止计算梯度，节省显存和计算。
+
+---
+
+## 20. 解码端的残差结构有没有把后续未被看见的 mask 信息添加进来，造成信息泄露？
+
+不会。
+
+原因是：残差连接加的是当前子层的输入，而这个输入本身已经不包含未来信息。
+
+以 Decoder masked self-attention 为例。
+
+第 $t$ 个位置的输入表示是：
+
+$$
+x_t
+$$
+
+masked self-attention 的输出是：
+
+$$
+\text{MaskedAttention}(x_t)
+$$
+
+由于 mask 存在，位置 $t$ 只能关注：
+
+$$
+1,2,\dots,t
+$$
+
+不能关注：
+
+$$
+t+1,t+2,\dots
+$$
+
+残差连接做的是：
+
+$$
+x_t + \text{MaskedAttention}(x_t)
+$$
+
+这里的 $x_t$ 是当前位置自己的表示，不是未来位置的信息。
+
+所以它不会把未来 token 加进来。
+
+关键点是：
+
+> mask 作用在 attention score 上，确保 attention 输出没有未来信息；残差只是把当前位置原本的输入加回来，不会绕过 mask 去访问未来位置。
+
+另外，训练时虽然整个目标序列一次性送入 Decoder，但每个位置的 attention 都被 causal mask 限制了，因此不会发生未来信息泄露。
+
+---
+
+# 总结版
+
+Transformer 的核心是基于 self-attention 的 Encoder-Decoder 架构。
+
+Encoder 通过多头自注意力和前馈网络编码输入序列，Decoder 通过 masked self-attention 建模已生成目标序列，再通过 cross-attention 读取 Encoder 输出。
+
+多头注意力让模型在不同子空间中学习不同关系；Q、K、V 使用不同投影矩阵，是因为它们分别承担查询、匹配和信息提供的角色。
+
+Scaled dot-product attention 选择点乘是为了高效矩阵并行，除以 $\sqrt{d_k}$ 是为了避免点乘随维度增大导致 softmax 饱和。
+
+Transformer 通过 positional encoding 引入顺序信息，通过残差连接和 LayerNorm 稳定深层训练，通过 FFN 对每个 token 进行非线性特征变换。
+
+训练阶段 Encoder 和 Decoder 都可以并行，推理阶段 Decoder 由于自回归生成需要逐 token 进行。

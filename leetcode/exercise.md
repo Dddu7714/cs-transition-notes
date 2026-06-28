@@ -8,7 +8,26 @@
     [表达式 for 变量1 in ... for 变量2 in ...]
    ```
 
-# 1 
+# 1 两数之和 easy
+
+![alt text](1两数之和.png)
+
+## 答案
+```python
+class Solution:
+    def twoSum(self, nums: List[int], target: int) -> List[int]:
+        # for i in range(len(nums)):
+        #     val = target - nums[i]
+        #     if val in nums[i+1:]:
+        #         return [i, nums[i+1:].index(val)+i+1]
+        idx = {}  # 创建一个空哈希表（字典）
+        # enumerate()获取可迭代对象的索引和对应元素
+        for j, x in enumerate(nums):  # x=nums[j]
+            if target - x in idx:  # 在左边找 nums[i]，满足 nums[i]+x=target
+                return [idx[target - x], j]  # 返回两个数的下标
+            idx[x] = j  # 保存 nums[j] 和 j
+```
+
 ## 自己尝试的，错误百出。
 - list.index()只会返回第一个出现的索引
 - 注意是找到break还是没找到break，否则可能找到了还在循环
@@ -31,23 +50,20 @@ class Solution:
         #obj不一定被赋值
         return obj 
 ```
-## 列表循环，ai改
-```python
-class Solution:
-    def twoSum(self, nums: List[int], target: int) -> List[int]:
-        for i in range(len(nums)):
-            for j in range(i + 1, len(nums)):
-                if nums[i] + nums[j] == target:
-                    return [i, j]
-```
+
 ## 评论区解决遍历时间
 ```python
 class Solution:
     def twoSum(self, nums: List[int], target: int) -> List[int]:
         for i in range(len(nums)):
-            obj = []
             # index只会返回第一个出现的索引
             val = target - nums[i]
             if val in nums[i+1:]:
                 return [i, nums[i+1:].index(val)+i+1]
+```
+
+# 2 字母异位词分组
+
+```python
+'连接符'.join(列表/可迭代对象)
 ```
